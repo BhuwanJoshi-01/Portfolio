@@ -1,22 +1,7 @@
 /* Google Fonts Import */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@400;500;600;700;800;900&display=swap');
 
-/* Import component styles */
-@import './styles/global.css';
-@import './styles/theme.css';
-
-:root {
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-#root {
-  margin: auto;
-}
-
-/* Global Styles */
+/* CSS Reset and Base Styles */
 * {
   margin: 0;
   padding: 0;
@@ -40,11 +25,22 @@ body {
 body.dark,
 html.dark {
   color: #F9FAFB;
-  background: #0F0F23;
+  background: linear-gradient(135deg, #0F0F23 0%, #1A1A2E 50%, #16213E 100%);
 }
 
 html.dark {
   color-scheme: dark;
+}
+
+/* Ensure theme consistency */
+.dark * {
+  color-scheme: dark;
+}
+
+/* Root element */
+#root {
+  margin: 0 auto;
+  min-height: 100vh;
 }
 
 /* Scrollbar Styles */
@@ -67,7 +63,15 @@ html.dark {
 
 /* Dark theme scrollbar */
 html.dark ::-webkit-scrollbar-track {
-  background: rgba(26, 26, 46, 0.3);
+  background: rgba(15, 15, 35, 0.5);
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.6);
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.8);
 }
 
 /* Selection styles */
@@ -87,4 +91,35 @@ html.dark ::-webkit-scrollbar-track {
 *::before,
 *::after {
   transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+/* Performance optimizations */
+* {
+  will-change: auto;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Hardware acceleration for animations */
+.parallax-element,
+[data-cursor],
+.floating-element {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

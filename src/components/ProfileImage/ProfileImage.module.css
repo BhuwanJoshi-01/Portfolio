@@ -1,0 +1,364 @@
+.profileContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+}
+
+.profileContainer.large {
+  width: 320px;
+  height: 320px;
+}
+
+.profileContainer.medium {
+  width: 240px;
+  height: 240px;
+}
+
+.profileContainer.small {
+  width: 180px;
+  height: 180px;
+}
+
+.backgroundGlow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(
+    circle,
+    rgba(99, 102, 241, 0.3) 0%,
+    rgba(139, 92, 246, 0.2) 30%,
+    rgba(6, 182, 212, 0.1) 60%,
+    transparent 100%
+  );
+  border-radius: 50%;
+  filter: blur(40px);
+  z-index: -2;
+  animation: pulse 4s ease-in-out infinite;
+}
+
+:global(.dark) .backgroundGlow {
+  background: radial-gradient(
+    circle,
+    rgba(139, 92, 246, 0.4) 0%,
+    rgba(99, 102, 241, 0.3) 30%,
+    rgba(6, 182, 212, 0.2) 60%,
+    transparent 100%
+  );
+}
+
+.floatingOrb1,
+.floatingOrb2 {
+  position: absolute;
+  border-radius: 50%;
+  backdrop-filter: blur(10px);
+  z-index: -1;
+}
+
+.floatingOrb1 {
+  width: 60px;
+  height: 60px;
+  top: -20px;
+  right: -20px;
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  box-shadow: 0 8px 32px rgba(99, 102, 241, 0.2);
+}
+
+.floatingOrb2 {
+  width: 40px;
+  height: 40px;
+  bottom: -10px;
+  left: -15px;
+  background: rgba(6, 182, 212, 0.15);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  box-shadow: 0 8px 32px rgba(6, 182, 212, 0.2);
+}
+
+:global(.dark) .floatingOrb1 {
+  background: rgba(139, 92, 246, 0.2);
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
+}
+
+:global(.dark) .floatingOrb2 {
+  background: rgba(6, 182, 212, 0.2);
+  border: 1px solid rgba(6, 182, 212, 0.4);
+  box-shadow: 0 8px 32px rgba(6, 182, 212, 0.3);
+}
+
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+
+.glassFrame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  box-shadow: 
+    0 8px 32px rgba(31, 38, 135, 0.37),
+    inset 0 2px 4px rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+:global(.dark) .glassFrame {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 2px 4px rgba(255, 255, 255, 0.05);
+}
+
+.imageWrapper:hover .glassFrame {
+  border-color: rgba(99, 102, 241, 0.4);
+  box-shadow: 
+    0 12px 40px rgba(99, 102, 241, 0.3),
+    inset 0 2px 4px rgba(255, 255, 255, 0.2);
+}
+
+:global(.dark) .imageWrapper:hover .glassFrame {
+  border-color: rgba(139, 92, 246, 0.5);
+  box-shadow: 
+    0 12px 40px rgba(139, 92, 246, 0.4),
+    inset 0 2px 4px rgba(255, 255, 255, 0.1);
+}
+
+.innerFrame {
+  position: relative;
+  width: calc(100% - 12px);
+  height: calc(100% - 12px);
+  margin: 6px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+}
+
+:global(.dark) .innerFrame {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+}
+
+.profileImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 50%;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gradientOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.1) 0%,
+    transparent 30%,
+    transparent 70%,
+    rgba(139, 92, 246, 0.1) 100%
+  );
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.imageWrapper:hover .gradientOverlay {
+  opacity: 1;
+}
+
+.shineEffect {
+  position: absolute;
+  top: 0;
+  left: -100px;
+  width: 50px;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.6) 50%,
+    transparent 100%
+  );
+  transform: skewX(-20deg);
+  border-radius: 50%;
+}
+
+.statusIndicator {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  width: 24px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(34, 197, 94, 0.8);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(34, 197, 94, 0.3);
+}
+
+:global(.dark) .statusIndicator {
+  background: rgba(0, 0, 0, 0.7);
+  border-color: rgba(34, 197, 94, 0.9);
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  background: #22c55e;
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
+}
+
+.decorativeRing {
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  width: calc(100% + 40px);
+  height: calc(100% + 40px);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  border-top-color: rgba(99, 102, 241, 0.6);
+  border-radius: 50%;
+  z-index: -1;
+}
+
+.decorativeRing2 {
+  position: absolute;
+  top: -35px;
+  left: -35px;
+  width: calc(100% + 70px);
+  height: calc(100% + 70px);
+  border: 1px solid rgba(139, 92, 246, 0.15);
+  border-bottom-color: rgba(139, 92, 246, 0.4);
+  border-radius: 50%;
+  z-index: -1;
+}
+
+:global(.dark) .decorativeRing {
+  border-color: rgba(139, 92, 246, 0.3);
+  border-top-color: rgba(139, 92, 246, 0.7);
+}
+
+:global(.dark) .decorativeRing2 {
+  border-color: rgba(6, 182, 212, 0.2);
+  border-bottom-color: rgba(6, 182, 212, 0.5);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+/* Size variations */
+.medium .floatingOrb1 {
+  width: 45px;
+  height: 45px;
+  top: -15px;
+  right: -15px;
+}
+
+.medium .floatingOrb2 {
+  width: 30px;
+  height: 30px;
+  bottom: -8px;
+  left: -12px;
+}
+
+.medium .statusIndicator {
+  width: 20px;
+  height: 20px;
+  bottom: 15px;
+  right: 15px;
+}
+
+.medium .statusDot {
+  width: 6px;
+  height: 6px;
+}
+
+.small .floatingOrb1 {
+  width: 35px;
+  height: 35px;
+  top: -10px;
+  right: -10px;
+}
+
+.small .floatingOrb2 {
+  width: 25px;
+  height: 25px;
+  bottom: -5px;
+  left: -8px;
+}
+
+.small .statusIndicator {
+  width: 18px;
+  height: 18px;
+  bottom: 12px;
+  right: 12px;
+}
+
+.small .statusDot {
+  width: 5px;
+  height: 5px;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .profileContainer.large {
+    width: 280px;
+    height: 280px;
+  }
+  
+  .backgroundGlow {
+    width: 320px;
+    height: 320px;
+  }
+  
+  .decorativeRing {
+    top: -15px;
+    left: -15px;
+    width: calc(100% + 30px);
+    height: calc(100% + 30px);
+  }
+  
+  .decorativeRing2 {
+    top: -25px;
+    left: -25px;
+    width: calc(100% + 50px);
+    height: calc(100% + 50px);
+  }
+}
+
+@media (max-width: 480px) {
+  .profileContainer.large {
+    width: 240px;
+    height: 240px;
+  }
+  
+  .backgroundGlow {
+    width: 280px;
+    height: 280px;
+  }
+}

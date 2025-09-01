@@ -1,39 +1,53 @@
 {
-  "name": "my-portfolio",
-  "version": "0.1.0",
+  "name": "54d9e206132d802f3b044b300eb4ee6021aeff3c4932420ab48d4677bd1d2997",
   "private": true,
-  "dependencies": {
-    "@testing-library/dom": "^10.4.1",
-    "@testing-library/jest-dom": "^6.8.0",
-    "@testing-library/react": "^16.3.0",
-    "@testing-library/user-event": "^13.5.0",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1",
-    "react-scripts": "5.0.1",
-    "web-vitals": "^2.1.4"
-  },
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+  "dependencies": {
+    "@kombai/react-error-boundary": "^1.1.0",
+    "date-fns": "^4.1.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "framer-motion": "latest"
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+  "devDependencies": {
+    "@eslint/js": "^9.21.0",
+    "@types/node": "^24.3.0",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@vitejs/plugin-react": "^4.7.0",
+    "comment-json": "^4.2.5",
+    "env-cmd": "^11.0.0",
+    "eslint": "^9.21.0",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-react-refresh": "^0.4.19",
+    "globals": "^15.15.0",
+    "rollup": "^4.44.1",
+    "vite": "^6.2.0",
+    "vite-plugin-static-copy": "^3.1.2"
+  },
+  "strictDependencies": {
+    "@kombai/react-error-boundary": "^1.1.0",
+    "date-fns": "^4.1.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "@eslint/js": "^9.21.0",
+    "@types/node": "^24.3.0",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@vitejs/plugin-react": "^4.7.0",
+    "comment-json": "^4.2.5",
+    "env-cmd": "^11.0.0",
+    "eslint": "^9.21.0",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-react-refresh": "^0.4.19",
+    "globals": "^15.15.0",
+    "rollup": "^4.44.1"
   }
 }

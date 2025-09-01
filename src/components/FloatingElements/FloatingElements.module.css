@@ -1,0 +1,269 @@
+.floatingContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.floatingContainer.global {
+  z-index: 1;
+}
+
+/* Base floating element styles */
+.floatingOrb,
+.floatingSquare,
+.floatingTriangle,
+.floatingDiamond,
+.floatingHexagon,
+.floatingRing {
+  position: absolute;
+  backdrop-filter: blur(12px);
+  border: 1px solid;
+  box-shadow: 0 8px 32px;
+  will-change: transform;
+}
+
+/* Orb shapes */
+.floatingOrb {
+  border-radius: 50%;
+}
+
+/* Square shapes */
+.floatingSquare {
+  border-radius: 12px;
+}
+
+/* Triangle shapes */
+.floatingTriangle {
+  width: 0;
+  height: 0;
+  background: transparent !important;
+  backdrop-filter: none;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-bottom: 35px solid;
+  border-top: none;
+  border-radius: 0;
+  box-shadow: 0 8px 32px;
+}
+
+.floatingTriangle.medium {
+  border-left-width: 25px;
+  border-right-width: 25px;
+  border-bottom-width: 43px;
+}
+
+.floatingTriangle.large {
+  border-left-width: 30px;
+  border-right-width: 30px;
+  border-bottom-width: 52px;
+}
+
+/* Diamond shapes */
+.floatingDiamond {
+  transform: rotate(45deg);
+  border-radius: 8px;
+}
+
+/* Hexagon shapes */
+.floatingHexagon {
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  border-radius: 0;
+}
+
+/* Ring shapes */
+.floatingRing {
+  border-radius: 50%;
+  background: transparent !important;
+  border-width: 3px;
+}
+
+/* Size variations */
+.small {
+  width: 24px;
+  height: 24px;
+}
+
+.medium {
+  width: 40px;
+  height: 40px;
+}
+
+.large {
+  width: 60px;
+  height: 60px;
+}
+
+.floatingRing.small {
+  border-width: 2px;
+}
+
+.floatingRing.medium {
+  border-width: 3px;
+}
+
+.floatingRing.large {
+  border-width: 4px;
+}
+
+/* Color variations */
+.primary {
+  background: var(--floating-primary);
+  border-color: var(--floating-primary-border);
+  box-shadow: 0 8px 32px var(--floating-primary-glow);
+}
+
+.primary.floatingTriangle {
+  border-bottom-color: var(--floating-primary-border);
+  box-shadow: 0 8px 32px var(--floating-primary-glow);
+}
+
+.secondary {
+  background: var(--floating-secondary);
+  border-color: var(--floating-secondary-border);
+  box-shadow: 0 8px 32px var(--floating-secondary-glow);
+}
+
+.secondary.floatingTriangle {
+  border-bottom-color: var(--floating-secondary-border);
+  box-shadow: 0 8px 32px var(--floating-secondary-glow);
+}
+
+.accent {
+  background: var(--floating-accent);
+  border-color: var(--floating-accent-border);
+  box-shadow: 0 8px 32px var(--floating-accent-glow);
+}
+
+.accent.floatingTriangle {
+  border-bottom-color: var(--floating-accent-border);
+  box-shadow: 0 8px 32px var(--floating-accent-glow);
+}
+
+.warm {
+  background: var(--floating-warm);
+  border-color: var(--floating-warm-border);
+  box-shadow: 0 8px 32px var(--floating-warm-glow);
+}
+
+.warm.floatingTriangle {
+  border-bottom-color: var(--floating-warm-border);
+  box-shadow: 0 8px 32px var(--floating-warm-glow);
+}
+
+.emerald {
+  background: var(--floating-emerald);
+  border-color: var(--floating-emerald-border);
+  box-shadow: 0 8px 32px var(--floating-emerald-glow);
+}
+
+.emerald.floatingTriangle {
+  border-bottom-color: var(--floating-emerald-border);
+  box-shadow: 0 8px 32px var(--floating-emerald-glow);
+}
+
+.amber {
+  background: var(--floating-amber);
+  border-color: var(--floating-amber-border);
+  box-shadow: 0 8px 32px var(--floating-amber-glow);
+}
+
+.amber.floatingTriangle {
+  border-bottom-color: var(--floating-amber-border);
+  box-shadow: 0 8px 32px var(--floating-amber-glow);
+}
+
+/* Enhanced glow effects */
+.floatingOrb::before,
+.floatingSquare::before,
+.floatingDiamond::before,
+.floatingHexagon::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: inherit;
+  border-radius: inherit;
+  filter: blur(8px);
+  opacity: 0.6;
+  z-index: -1;
+}
+
+.floatingRing::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border: inherit;
+  border-radius: inherit;
+  filter: blur(6px);
+  opacity: 0.8;
+  z-index: -1;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .large {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .medium {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .small {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .floatingTriangle.large {
+    border-left-width: 24px;
+    border-right-width: 24px;
+    border-bottom-width: 42px;
+  }
+  
+  .floatingTriangle.medium {
+    border-left-width: 20px;
+    border-right-width: 20px;
+    border-bottom-width: 35px;
+  }
+}
+
+@media (max-width: 768px) {
+  .floatingContainer {
+    display: none;
+  }
+}
+
+/* Performance optimizations */
+.floatingOrb,
+.floatingSquare,
+.floatingTriangle,
+.floatingDiamond,
+.floatingHexagon,
+.floatingRing {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .floatingOrb,
+  .floatingSquare,
+  .floatingTriangle,
+  .floatingDiamond,
+  .floatingHexagon,
+  .floatingRing {
+    animation: none !important;
+  }
+}
