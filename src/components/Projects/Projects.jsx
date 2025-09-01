@@ -44,6 +44,19 @@ const projects = [
     category: 'Full Stack',
     featured: true,
   },
+
+  {
+  id: 4,
+  title: 'Smart Refrigerator',
+  description: 'An Arduino-based smart refrigerator project.',
+  image: '/smart_refriedgerator.png', 
+  imageAlt: 'Arduino Smart Refrigerator',
+  technologies: ['C++', 'Arduino', 'Sensors'],
+  liveUrl: 'https://www.tinkercad.com/things/j1lbvtGtLyl-smart-refriedgerator',
+  githubUrl: 'https://github.com/BhuwanJoshi-01/Smart_Refrigerator_Using_Arduino', // not public
+  category: 'Arduino',
+  featured: false,
+  },
 ];
 
 
