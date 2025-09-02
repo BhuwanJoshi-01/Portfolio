@@ -26,19 +26,11 @@ const Contact = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    setSubmitStatus(null);
-
-    // Simulate form submission (replace with actual EmailJS or API call)
-    try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      setSubmitStatus('success');
-      setFormData({ name: '', email: '', subject: '', message: '' });
-    } catch (error) {
-      setSubmitStatus('error');
-    } finally {
-      setIsSubmitting(false);
-    }
+    const mailto = `mailto:bhuwanj766@gmail.com?subject=${encodeURIComponent(formData.subject || 'Contact Form Submission')}` +
+      `&body=${encodeURIComponent(
+        `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`
+      )}`;
+    window.location.href = mailto;
   };
 
   const contactInfo = [
