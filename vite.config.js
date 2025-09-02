@@ -2,18 +2,8 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 import path from "path";
-const config = {
-  mode: "development",
-  build: {
-    outDir: "dist",
-    emptyOutDir: true,
-    sourcemap: true,
-    minify: false,
-    cssMinify: false,
-    terserOptions: { compress: false, mangle: false },
-  },
-  define: { "process.env.NODE_ENV": "'development'" },
-  esbuild: { jsx: "automatic", jsxImportSource: "react" },
+
+export default defineConfig({
   plugins: [
     react(),
     viteStaticCopy({
@@ -21,13 +11,21 @@ const config = {
         { src: "./assets/*", dest: "assets" },
         {
           src: "./public/assets/{*,}",
-          dest: path.join("dist", "public/assets"),
+          dest: "public/assets", // no need to hardcode dist here
         },
-        { src: "./assets/*", dest: path.join("dist", "assets") },
       ],
       silent: true,
     }),
   ],
+  build: {
+    outDir: "dist",
+    emptyOutDir: true,
+    sourcemap: false,   // disable unless debugging
+    minify: "esbuild",  // fast minification
+  },
+  define: {
+    "process.env.NODE_ENV": JSON.stringify("production"),
+  },
   resolve: {},
-};
-export default defineConfig(config);
+  base: "/", // important for custom domain hosting at root
+});
