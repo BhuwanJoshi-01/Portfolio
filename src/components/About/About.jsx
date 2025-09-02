@@ -85,7 +85,7 @@ const experience = [
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
           transition={{ duration: 0.8 }}
         >
-          <h2 className={styles.title}>About Me</h2>
+          <h1 className={styles.title}>About Me</h1>
           <div className={styles.titleAccent} />
         </motion.div>
 

@@ -130,9 +130,9 @@ const Contact = () => {
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
           transition={{ duration: 0.8 }}
         >
-          <h2 className={styles.title}>Let's Work Together</h2>
+          <h2 className={styles.title}>Contact Me</h2>
           <p className={styles.subtitle}>
-            Have a project in mind? I'd love to hear about it. Let's create something amazing together.
+            Get in touch with Bhuwan Joshi, Full Stack Developer in Kathmandu, for web development, project collaboration, or technical consulting. Fill out the form below to send your message directly to my email.
           </p>
           <div className={styles.titleAccent} />
         </motion.div>
@@ -204,6 +204,7 @@ const Contact = () => {
               className={styles.contactForm}
               onSubmit={handleSubmit}
               variants={itemVariants}
+              aria-label="Contact form for Bhuwan Joshi, Full Stack Developer"
             >
               <div className={styles.formGrid}>
                 <motion.div className={styles.inputGroup} variants={itemVariants}>
@@ -218,6 +219,7 @@ const Contact = () => {
                     onChange={handleInputChange}
                     className={styles.input}
                     required
+                    aria-label="Your Name"
                   />
                 </motion.div>
 
@@ -233,6 +235,7 @@ const Contact = () => {
                     onChange={handleInputChange}
                     className={styles.input}
                     required
+                    aria-label="Your Email"
                   />
                 </motion.div>
               </div>
@@ -249,6 +252,7 @@ const Contact = () => {
                   onChange={handleInputChange}
                   className={styles.input}
                   required
+                  aria-label="Subject"
                 />
               </motion.div>
 
@@ -264,6 +268,7 @@ const Contact = () => {
                   className={styles.textarea}
                   rows="6"
                   required
+                  aria-label="Message"
                 />
               </motion.div>
 
