@@ -383,6 +383,7 @@
     grid-template-columns: 1fr;
     gap: 3rem;
     text-align: center;
+    margin-top: 130px;
   }
   
   .profileSection {
@@ -403,6 +404,7 @@
   
   .heroLayout {
     gap: 2rem;
+    margin-top: 90px;
   }
   
   .content {

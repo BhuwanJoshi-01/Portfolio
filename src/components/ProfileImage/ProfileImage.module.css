@@ -329,20 +329,18 @@
   .profileContainer.large {
     width: 280px;
     height: 280px;
+    z-index: 1100;
   }
-  
   .backgroundGlow {
     width: 320px;
     height: 320px;
   }
-  
   .decorativeRing {
     top: -15px;
     left: -15px;
     width: calc(100% + 30px);
     height: calc(100% + 30px);
   }
-  
   .decorativeRing2 {
     top: -25px;
     left: -25px;

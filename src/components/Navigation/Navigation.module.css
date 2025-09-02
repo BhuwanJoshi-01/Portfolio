@@ -176,17 +176,17 @@
   .desktopNav {
     display: none;
   }
-  
   .mobileMenuButton {
     display: block;
   }
-  
   .mobileMenu {
     display: block;
   }
-  
   .container {
     padding: 0 1rem;
+  }
+  .navigation {
+    z-index: 100;
   }
 }
 
