@@ -2,6 +2,7 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 import path from "path";
+import { viteObfuscateFile } from 'vite-plugin-obfuscator';
 
 export default defineConfig({
   plugins: [
@@ -15,6 +16,14 @@ export default defineConfig({
         },
       ],
       silent: true,
+    }),
+    viteObfuscateFile({
+      compact: true,
+      controlFlowFlattening: true,
+      deadCodeInjection: true,
+      debugProtection: false,
+      disableConsoleOutput: true,
+      log: false,
     }),
   ],
   build: {
