@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
 import styles from './Projects.module.css';
 
@@ -6,6 +6,17 @@ const Projects = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
   const [selectedProject, setSelectedProject] = useState(null);
+  const [linkMessage, setLinkMessage] = useState('');
+
+  useEffect(() => {
+    if (linkMessage) {
+      const timer = setTimeout(() => {
+        setLinkMessage('');
+      }, 5000); // 5 seconds
+
+      return () => clearTimeout(timer);
+    }
+  }, [linkMessage]);
 
 const projects = [
   {
@@ -16,7 +27,7 @@ const projects = [
     imageAlt: 'Forgex developer learning and mentoring platform',
     technologies: ['Jinja', 'FastAPI', 'PostgreSQL', 'Django', 'Docker', 'Monaco Editor', 'WebRTC', 'WebSocket', 'Tailwind CSS'],
     liveUrl: 'https://forgexdev.me',
-    githubUrl: 'https://forgexdev.me', // not open source
+    githubUrl: '#', // not open source
     category: 'Full Stack',
     featured: true,
   },
@@ -27,7 +38,7 @@ const projects = [
     image: '/Earthly_wonders.png', 
     imageAlt: 'Nature themed website Earthly Wonders project',
     technologies: ['HTML', 'CSS'],
-    liveUrl: 'https://github.com/BhuwanJoshi-01/WEB_Project_Nature',
+    liveUrl: '#',
     githubUrl: 'https://github.com/BhuwanJoshi-01/WEB_Project_Nature',
     category: 'Frontend',
     featured: false,
@@ -40,7 +51,7 @@ const projects = [
     imageAlt: 'KodeSQL SQL learning and practice platform',
     technologies: ['Jinja', 'Django', 'PostgreSQL', 'Monaco Editor', 'MySQL'],
     liveUrl: 'https://kodesql.in',
-    githubUrl: 'https://kodesql.in', // not public
+    githubUrl: '#', // not public
     category: 'Full Stack',
     featured: true,
   },
@@ -57,8 +68,19 @@ const projects = [
   category: 'Arduino',
   featured: false,
   },
+  {
+    id: 5,
+    title: 'QuickWash - Car Wash Booking System',
+    description: 'A comprehensive car wash booking platform with Node.js backend and React Native frontend. Features phone authentication, role-based access control, subscription plans, real-time booking coordination, and cross-platform support.',
+    image: '/quickwash.png',
+    imageAlt: 'QuickWash car wash booking system',
+    technologies: ['Node.js', 'Express', 'TypeScript', 'Firebase', 'Firestore', 'React Native', 'Expo', 'React Navigation', 'AsyncStorage'],
+    liveUrl: '#', // To be updated when deployed
+    githubUrl: '#', // Private repository
+    category: 'Full Stack',
+    featured: true,
+  },
 ];
-
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -90,6 +112,7 @@ const projects = [
 
   const openProject = (project) => {
     setSelectedProject(project);
+    setLinkMessage(''); // Clear message when opening new modal
   };
 
   const closeProject = () => {
@@ -183,42 +206,95 @@ const projects = [
                 </div>
 
                 <div className={styles.projectActions}>
-                  <motion.a
-                    href={project.liveUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={styles.actionButton}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                      <polyline points="15,3 21,3 21,9" />
-                      <line x1="10" y1="14" x2="21" y2="3" />
-                    </svg>
-                    View Live Project 
-                  </motion.a>
+                  {project.liveUrl === '#' ? (
+                    <motion.button
+                      className={styles.actionButton}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setLinkMessage('Live demo is not available - Project not deployed yet');
+                      }}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                        <polyline points="15,3 21,3 21,9" />
+                        <line x1="10" y1="14" x2="21" y2="3" />
+                      </svg>
+                      View Live Project 
+                    </motion.button>
+                  ) : (
+                    <motion.a
+                      href={project.liveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.actionButton}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                        <polyline points="15,3 21,3 21,9" />
+                        <line x1="10" y1="14" x2="21" y2="3" />
+                      </svg>
+                      View Live Project 
+                    </motion.a>
+                  )}
                   
-                  <motion.a
-                    href={project.githubUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={styles.actionButton}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
-                    </svg>
-                    View Source Code
-                  </motion.a>
+                  {project.githubUrl === '#' ? (
+                    <motion.button
+                      className={styles.actionButton}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setLinkMessage('Repository is private and hidden due to license restrictions');
+                      }}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
+                      </svg>
+                      View Source Code
+                    </motion.button>
+                  ) : (
+                    <motion.a
+                      href={project.githubUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.actionButton}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
+                      </svg>
+                      View Source Code
+                    </motion.a>
+                  )}
                 </div>
               </div>
             </motion.div>
           ))}
         </motion.div>
+
+        {linkMessage && (
+          <motion.div
+            className={styles.linkMessage}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+          >
+            {linkMessage}
+            <button
+              className={styles.closeMessage}
+              onClick={() => setLinkMessage('')}
+            >
+              ×
+            </button>
+          </motion.div>
+        )}
       </div>
 
       {/* Project Modal */}
@@ -276,28 +352,67 @@ const projects = [
                 </div>
 
                 <div className={styles.modalActions}>
-                  <motion.a
-                    href={selectedProject.liveUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={styles.modalButton}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    View Live Demo
-                  </motion.a>
+                  {selectedProject.liveUrl === '#' ? (
+                    <motion.button
+                      className={styles.modalButton}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => setLinkMessage('Live demo is not available - Project not deployed yet')}
+                    >
+                      View Live Demo
+                    </motion.button>
+                  ) : (
+                    <motion.a
+                      href={selectedProject.liveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.modalButton}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      View Live Demo
+                    </motion.a>
+                  )}
                   
-                  <motion.a
-                    href={selectedProject.githubUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={styles.modalButtonSecondary}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    View on GitHub
-                  </motion.a>
+                  {selectedProject.githubUrl === '#' ? (
+                    <motion.button
+                      className={styles.modalButtonSecondary}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => setLinkMessage('Repository is private and hidden due to license restrictions')}
+                    >
+                      View on GitHub
+                    </motion.button>
+                  ) : (
+                    <motion.a
+                      href={selectedProject.githubUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.modalButtonSecondary}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      View on GitHub
+                    </motion.a>
+                  )}
                 </div>
+
+                {linkMessage && (
+                  <motion.div
+                    className={styles.linkMessage}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                  >
+                    {linkMessage}
+                    <button
+                      className={styles.closeMessage}
+                      onClick={() => setLinkMessage('')}
+                    >
+                      ×
+                    </button>
+                  </motion.div>
+                )}
               </div>
             </motion.div>
           </motion.div>

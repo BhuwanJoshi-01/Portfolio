@@ -224,82 +224,64 @@
   box-shadow: 0 4px 16px 0 rgba(99, 102, 241, 0.1);
 }
 
-.skillsGrid {
+.skillsCategories {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 2rem;
 }
 
-.skillItem {
-  background: rgba(255, 255, 255, 0.1);
+.categorySection {
+  background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
-  padding: 1.25rem;
-  cursor: pointer;
+  padding: 1.5rem;
   transition: all 0.3s ease;
 }
 
-:global(.dark) .skillItem {
-  background: rgba(26, 26, 46, 0.1);
+:global(.dark) .categorySection {
+  background: rgba(26, 26, 46, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.skillItem:hover {
+.categorySection:hover {
   background: rgba(99, 102, 241, 0.1);
   border-color: rgba(99, 102, 241, 0.2);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
 }
 
-.skillHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.75rem;
-}
-
-.skillName {
-  font-family: 'Inter', sans-serif;
-  font-size: 1rem;
+.categoryTitle {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.25rem;
   font-weight: 600;
   color: var(--text-primary);
+  margin: 0 0 1rem 0;
+  text-transform: capitalize;
 }
 
-.skillCategory {
-  font-family: 'Inter', sans-serif;
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: var(--text-secondary);
-  background: rgba(99, 102, 241, 0.2);
-  padding: 0.25rem 0.5rem;
-  border-radius: 6px;
+.skillList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
 }
 
-.skillBar {
-  width: 100%;
-  height: 6px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 3px;
-  overflow: hidden;
-  margin-bottom: 0.5rem;
-}
-
-:global(.dark) .skillBar {
-  background: rgba(26, 26, 46, 0.3);
-}
-
-.skillProgress {
-  height: 100%;
-  background: linear-gradient(90deg, #6366F1, #8B5CF6);
-  border-radius: 3px;
-  transition: width 1s ease-out;
-}
-
-.skillLevel {
+.skillTag {
   font-family: 'Inter', sans-serif;
   font-size: 0.875rem;
-  font-weight: 600;
-  color: #6366F1;
+  font-weight: 500;
+  color: var(--text-primary);
+  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  border-radius: 20px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.skillTag:hover {
+  background: rgba(99, 102, 241, 0.2);
+  border-color: rgba(99, 102, 241, 0.4);
+  transform: scale(1.05);
 }
 
 .statsSection {

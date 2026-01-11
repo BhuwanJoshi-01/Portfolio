@@ -6,49 +6,141 @@ const About = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
 
-  const skills = [
-    { name: 'React', level: 95, category: 'Frontend' },
-    { name: 'Node.js', level: 90, category: 'Backend' },
-    { name: 'Jinja2', level: 88, category: 'Language' },
-    { name: 'Python', level: 85, category: 'Language' },
-    { name: 'PostgreSQL', level: 82, category: 'Database' },
-    { name: 'AWS', level: 78, category: 'Cloud' },
-     { name: 'Google Cloud Console', level: 78, category: 'Cloud' },
-    { name: 'Docker', level: 80, category: 'DevOps' },
-    { name: 'Django', level: 95, category: 'Backend' },
-    { name: 'FastAPI', level: 83, category: 'API' },
-  ];
+  const skills = {
+    frontend: [
+      "React",
+      "Vue.js",
+      "Vite",
+      "HTML5",
+      "CSS3",
+      "Tailwind CSS",
+      "Bootstrap",
+      "React Query",
+      "Axios"
+    ],
+    backend: [
+      "Node.js",
+      "Express",
+      "NestJS",
+      "Django",
+      "Django REST Framework",
+      "FastAPI",
+      "Redis",
+      "PostgreSQL",
+      "MySQL",
+      "SQLite",
+      "MongoDB",
+      "REST API"
+    ],
+    real_time_communication: [
+      "WebSockets",
+      "Socket.IO",
+      "WebRTC",
+      "Server-Sent Events (SSE)"
+    ],
+    authentication_authorization: [
+      "JWT",
+      "OAuth 2.0",
+      "OpenID Connect",
+      "Session-based Auth",
+      "Passport.js",
+      "Auth0",
+      "Firebase Authentication"
+    ],
+    devops: [
+      "Docker",
+      "Kubernetes",
+      "GitHub Actions",
+      "Nginx",
+      "CI/CD Pipelines"
+    ],
+    cloud_platforms: [
+      "AWS",
+      "Google Cloud Platform",
+      "Firebase",
+      "Vercel",
+      "Netlify",
+      "DigitalOcean"
+    ],
+    ai_ml: [
+      "Pandas",
+      "NumPy",
+      "Scikit-Learn",
+      "TensorFlow",
+      "PyTorch",
+      "Matplotlib",
+      "Seaborn"
+    ],
+    mobile: [
+      "React Native",
+      "Expo",
+      "Android",
+      "Flutter",
+      "Gradlew"
+    ],
+    testing: [
+      "Jest",
+      "Playwright",
+      "PyTest",
+      "JUnit"
+    ],
+    build_tools_package_managers: [
+      "Webpack",
+      "Vite",
+      "Babel",
+      "npm",
+      "yarn",
+      "pnpm"
+    ],
+    monitoring_logging: [
+      "Sentry",
+      "Logstash"
+    ],
+    languages: [
+      "TypeScript",
+      "JavaScript",
+      "Python",
+      "Java",
+      "PHP"
+    ]
+  };
 
 const experience = [
   {
-    year: '2023 - 2025',
-    title: 'Full-Stack Projects',
+    year: '2025 - 2026',
+    title: 'Mobile & Advanced Server-Side Development',
     company: '',
-    description: 'Built projects combining frontend, backend, and cloud. Focus on performance, scalability, and clean architecture.',
+    description: 'Developed cross-platform mobile applications using React Native, Expo, and Flutter. Implemented advanced server-side architectures with microservices, real-time communication (WebSockets, WebRTC), and AI/ML integrations using TensorFlow and PyTorch.',
+  },
+  {
+    year: '2023 - 2025',
+    title: 'Full-Stack & Cloud Projects',
+    company: '',
+    description: 'Built comprehensive full-stack applications combining modern frontend frameworks with robust backend APIs. Leveraged cloud platforms (AWS, GCP, Firebase) and DevOps practices for scalable, secure deployments.',
   },
   {
     year: '2022',
-    title: 'Cloud & DevOps',
+    title: 'Cloud & DevOps Engineering',
     company: '',
-    description: 'Knowledge of AWS, GCP, and Azure. Familiar with Git, CI/CD pipelines, and Docker for deployment workflows.',
+    description: 'Mastered cloud infrastructure across AWS, GCP, and Azure. Implemented CI/CD pipelines, containerization with Docker/Kubernetes, and monitoring with Sentry for production-ready applications.',
   },
   {
     year: '2021',
-    title: 'Server-Side & Databases',
+    title: 'Advanced Backend & Databases',
     company: '',
-    description: 'Worked with MySQL, PostgreSQL, and MongoDB. Implemented authentication, session management, and data modeling.',
+    description: 'Designed and optimized database architectures using PostgreSQL, MySQL, MongoDB, and Redis. Implemented authentication systems with JWT, OAuth, and session management for secure applications.',
   },
   {
     year: '2020',
-    title: 'Backend Development',
+    title: 'Backend API Development',
     company: '',
-    description: 'Experience with Node.js, Express.js, Django, and Flask for creating scalable APIs and business logic.',
+    description: 'Created scalable REST APIs and GraphQL services using Node.js (Express, NestJS), Python (Django, FastAPI), and various authentication frameworks for modern web applications.',
   },
   {
     year: '2019',
     title: 'Frontend Development',
     company: '',
-    description: 'Skilled in HTML, CSS, JavaScript, React, Next.js, and Tailwind CSS for building modern, responsive UIs.',
+    description: 'Built responsive, interactive user interfaces using React, Vue.js, HTML5, CSS3, and modern CSS frameworks like Tailwind CSS for optimal user experiences.',
   },
 ];
 
@@ -101,13 +193,22 @@ const experience = [
               <p className={styles.bioText}>
                 I'm a passionate full-stack developer with over 5 years of experience 
                 creating digital solutions that matter. My journey began with a curiosity 
-                about how things work on the web, and it has evolved into a deep love for 
-                crafting exceptional user experiences.
+                about how things work on the web, and it has evolved into expertise across 
+                the entire development spectrum - from responsive web applications and 
+                cross-platform mobile apps to robust server-side architectures and cloud 
+                infrastructure.
               </p>
               <p className={styles.bioText}>
-                When I'm not coding, you'll find me exploring new technologies, 
-                contributing to open-source projects, or sharing knowledge with the 
-                developer community through blog posts and mentoring.
+                I've built everything from interactive web platforms and real-time 
+                communication systems to mobile applications that serve thousands of users. 
+                My experience spans modern frontend frameworks, scalable backend APIs, 
+                database design, cloud deployment, and DevOps practices. I love tackling 
+                complex challenges and turning innovative ideas into production-ready solutions.
+              </p>
+              <p className={styles.bioText}>
+                When I'm not coding, you'll find me exploring emerging technologies, 
+                contributing to open-source projects, mentoring aspiring developers, or 
+                sharing insights through technical writing and community engagement.
               </p>
             </motion.div>
 
@@ -132,42 +233,6 @@ const experience = [
                 ))}
               </div>
             </motion.div>
-          </motion.div>
-
-          <motion.div
-            className={styles.rightColumn}
-            variants={containerVariants}
-            initial="hidden"
-            animate={isInView ? "visible" : "hidden"}
-          >
-            <motion.div className={styles.skillsSection} variants={itemVariants}>
-              <h3 className={styles.sectionTitle}>Skills & Technologies</h3>
-              <div className={styles.skillsGrid}>
-                {skills.map((skill, index) => (
-                  <motion.div
-                    key={skill.name}
-                    className={styles.skillItem}
-                    variants={itemVariants}
-                    whileHover={{ scale: 1.05, y: -5 }}
-                    transition={{ type: 'spring', stiffness: 300 }}
-                  >
-                    <div className={styles.skillHeader}>
-                      <span className={styles.skillName}>{skill.name}</span>
-                      <span className={styles.skillCategory}>{skill.category}</span>
-                    </div>
-                    <div className={styles.skillBar}>
-                      <motion.div
-                        className={styles.skillProgress}
-                        initial={{ width: 0 }}
-                        animate={isInView ? { width: `${skill.level}%` } : { width: 0 }}
-                        transition={{ duration: 1, delay: index * 0.1 }}
-                      />
-                    </div>
-                    <span className={styles.skillLevel}>{skill.level}%</span>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
 
             <motion.div className={styles.statsSection} variants={itemVariants}>
               <h3 className={styles.sectionTitle}>By the Numbers</h3>
@@ -176,7 +241,7 @@ const experience = [
                   className={styles.statItem}
                   whileHover={{ scale: 1.05 }}
                 >
-                  <span className={styles.statNumber}>20+</span>
+                  <span className={styles.statNumber}>30+</span>
                   <span className={styles.statLabel}>Projects Completed</span>
                 </motion.div>
                 <motion.div 
@@ -190,9 +255,46 @@ const experience = [
                   className={styles.statItem}
                   whileHover={{ scale: 1.05 }}
                 >
-                  <span className={styles.statNumber}>15+</span>
-                  <span className={styles.statLabel}>Happy Clients</span>
+                  <span className={styles.statNumber}>70+</span>
+                  <span className={styles.statLabel}>Technologies Mastered</span>
                 </motion.div>
+              </div>
+            </motion.div>
+          </motion.div>
+
+          <motion.div
+            className={styles.rightColumn}
+            variants={containerVariants}
+            initial="hidden"
+            animate={isInView ? "visible" : "hidden"}
+          >
+            <motion.div className={styles.skillsSection} variants={itemVariants}>
+              <h3 className={styles.sectionTitle}>Skills & Technologies</h3>
+              <div className={styles.skillsCategories}>
+                {Object.entries(skills).map(([category, skillList]) => (
+                  <motion.div
+                    key={category}
+                    className={styles.categorySection}
+                    variants={itemVariants}
+                  >
+                    <h4 className={styles.categoryTitle}>
+                      {category.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                    </h4>
+                    <div className={styles.skillList}>
+                      {skillList.map((skill, index) => (
+                        <motion.span
+                          key={skill}
+                          className={styles.skillTag}
+                          variants={itemVariants}
+                          whileHover={{ scale: 1.1, backgroundColor: 'rgba(0, 123, 255, 0.1)' }}
+                          transition={{ type: 'spring', stiffness: 300 }}
+                        >
+                          {skill}
+                        </motion.span>
+                      ))}
+                    </div>
+                  </motion.div>
+                ))}
               </div>
             </motion.div>
           </motion.div>

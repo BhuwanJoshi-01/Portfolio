@@ -116,8 +116,12 @@ const Hero = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.8, duration: 0.8 }}
             >
-              I craft beautiful, functional web experiences that bridge the gap between 
-              design and technology. Passionate about creating solutions that make a difference.
+              A passionate full-stack developer with 5+ years of experience crafting innovative 
+              digital solutions. I specialize in building scalable web applications, cross-platform 
+              mobile apps, and robust server-side architectures using modern technologies like 
+              React, Node.js, Python, and cloud platforms. From concept to deployment, I bridge 
+              the gap between design and technology to create exceptional user experiences that 
+              drive real-world impact.
             </motion.p>
 
             <motion.div
