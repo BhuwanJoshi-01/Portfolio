@@ -1,85 +1,71 @@
+# Professional Storytelling Portfolio
 
-# Bhuwan Joshi – Portfolio
+A modern, high-performance developer portfolio built with React, Tailwind CSS, and Framer Motion. Designed to tell your story through immersive scrolling, parallax effects, and interactive visualizations.
 
-A modern, animated, and responsive developer portfolio built with **React** and **Vite**.
+![Portfolio Preview](/preview.png)
 
-## Features
+## 🚀 Key Features
 
-- ⚡ Fast Vite-powered React app with HMR
-- 🎨 Dark/light theme toggle (context + CSS variables)
-- 🖼️ Project showcase with modal details and featured badges
-- ✨ Animated UI (Framer Motion): parallax, floating elements, custom cursor
-- 📱 Fully responsive and mobile-friendly
-- 🧑‍💻 Modular, maintainable component structure
-- 📨 Contact form (mocked, ready for integration)
-- 🛠️ ESLint, modern tooling, and easy customization
+-   **Narrative-Driven Flow**: "Hero -> Journey -> Skills -> Showcase -> Contact" storytelling structure.
+-   **Immersive Animations**: Scroll-triggered reveals, parallax backgrounds, and 3D tilt effects using Framer Motion.
+-   **Modern Styling**: Built with Tailwind CSS for a premium, responsive design (Dark/Light mode supported).
+-   **Performance**: Optimized with Vite for lightning-fast HMR and production builds.
+-   **Icons**: Using Lucide React for consistent, crisp iconography.
 
-## Structure
+## 🛠️ Tech Stack
+
+-   **Frontend**: React 18+
+-   **Build Tool**: Vite
+-   **Styling**: Tailwind CSS
+-   **Animation**: Framer Motion
+-   **Icons**: Lucide React
+
+## 🏃‍♂️ Getting Started
+
+1.  **Install Dependencies**
+    ```bash
+    npm install
+    ```
+
+2.  **Start Development Server**
+    ```bash
+    npm run dev
+    ```
+
+3.  **Build for Production**
+    ```bash
+    npm run build
+    ```
+
+## 🎨 Customization
+
+### 1. Personal Content
+Update the data in the corresponding components:
+-   **About/Experience**: `src/components/Story/JourneyTimeline.jsx`
+-   **Skills**: `src/components/Story/SkillsVisualizer.jsx`
+-   **Projects**: `src/components/Story/ProjectShowcase.jsx`
+-   **Contact**: `src/components/Story/ContactStory.jsx`
+
+### 2. Styling & Theme
+-   Edit `tailwind.config.js` to change the color palette (primary, secondary, etc.).
+-   Update `src/index.css` for global styles.
+
+### 3. Images
+-   Place your profile image and project screenshots in the `public/` folder.
+-   Update standard image paths in `HeroStory.jsx` and `ProjectShowcase.jsx`.
+
+## 📂 Project Structure
 
 ```
 src/
-	components/
-		About/
-		Contact/
-		CursorFollower/
-		FloatingElements/
-		Hero/
-		Navigation/
-		ParallaxSection/
-		ProfileImage/
-		Projects/
-		ThemeToggle/
-	context/
-		ThemeContext.jsx
-	styles/
-		global.css
-		theme.css
-	theme/
-		theme.js
-	App.js
-	index.js
-public/
-	forgexdev.png
-	kodesql.png
-	Earthly_wonders.png
-	profile_img.png
-	favicon.ico
-	...
-vite.config.js
-eslint.config.js
+├── components/
+│   ├── Layout/          # Global layout (Nav, Footer)
+│   ├── Story/           # Core storytelling components (Hero, Journey, etc.)
+│   └── Navigation/      # Navigation bar logic
+├── App.jsx              # Main application entry
+├── index.css            # Global Tailwind styles
+└── main.jsx             # React entry point
 ```
 
-## Projects
-
-- **Forgex** – Full-stack developer learning platform ([Live](https://forgexdev.me))
-- **KodeSQL** – SQL learning and challenge platform ([Live](https://kodesql.in))
-- **Earthly Wonders** – Nature-inspired frontend ([GitHub](https://github.com/BhuwanJoshi-01/WEB_Project_Nature))
-
-## Getting Started
-
-1. **Install dependencies:**
-	 ```sh
-	 npm install
-	 ```
-2. **Run locally:**
-	 ```sh
-	 npm run dev
-	 ```
-3. **Build for production:**
-	 ```sh
-	 npm run build
-	 ```
-
-## Customization
-
-- Add/edit projects in `src/components/Projects/Projects.jsx`
-- Update theme in `src/theme/theme.js` and `src/styles/theme.css`
-- Replace images in `public/`
-
-## License
-
-This project is for personal portfolio use. Feel free to fork and customize!
-
----
-
-**Made with ❤️ by Bhuwan Joshi**
+## 📄 License
+MIT
