@@ -1,6 +1,8 @@
 import React, { useRef } from 'react';
-import { motion, useScroll, useSpring, useTransform } from 'framer-motion';
+import { motion, useScroll, useSpring, useTransform, useInView } from 'framer-motion';
 import { Briefcase, GraduationCap, Rocket, Code2, Cloud, Smartphone } from 'lucide-react';
+import SceneWrapper from '../Motion/SceneWrapper';
+import { ease, staggerContainer, fadeUpVariants } from '../../hooks/useMotionConfig';
 
 const experience = [
   {
@@ -53,39 +55,71 @@ const experience = [
   },
 ];
 
-const TimelineItem = ({ exp, index, total }) => {
+/** Animated year counter for each timeline node */
+const YearBadge = ({ year, color }) => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: '-50px' });
+
+  return (
+    <motion.span
+      ref={ref}
+      className="text-sm font-bold tracking-wider uppercase block"
+      style={{ color }}
+      initial={{ opacity: 0, x: -10 }}
+      animate={isInView ? { opacity: 1, x: 0 } : {}}
+      transition={{ duration: 0.5, ease: ease.cinematic }}
+    >
+      {year}
+    </motion.span>
+  );
+};
+
+const TimelineItem = ({ exp, index, total, scrollProgress }) => {
   const ref = useRef(null);
   const isLeft = index % 2 === 0;
   const Icon = exp.icon;
+  const isInView = useInView(ref, { once: true, margin: '-80px' });
+
+  // Calculate when this node should glow based on scroll
+  const nodeStart = index / total;
+  const nodeEnd = (index + 1) / total;
+  const nodeGlow = useTransform(
+    scrollProgress,
+    [nodeStart, nodeEnd],
+    [0.3, 1]
+  );
+  const smoothGlow = useSpring(nodeGlow, { stiffness: 80, damping: 20 });
 
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 40 }}
+      initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94], delay: 0.1 }}
-      className="mb-12 md:mb-16"
+      transition={{ duration: 0.8, ease: ease.cinematic, delay: 0.1 }}
+      className="mb-14 md:mb-20"
     >
       {/* Mobile layout */}
       <div className="md:hidden flex gap-4">
         <div className="flex flex-col items-center">
-          <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 shadow-lg"
+          <motion.div
+            className="w-11 h-11 rounded-full flex items-center justify-center shrink-0 shadow-lg"
             style={{
               background: `linear-gradient(135deg, ${exp.color}, ${exp.color}88)`,
-              boxShadow: `0 0 15px ${exp.color}40`,
-            }}>
+              boxShadow: `0 0 20px ${exp.color}40`,
+              scale: isInView ? 1 : 0.5,
+            }}
+            transition={{ duration: 0.5, type: "spring" }}
+          >
             <Icon size={16} className="text-white" />
-          </div>
+          </motion.div>
           {index < total - 1 && (
             <div className="w-[2px] flex-1 mt-3" style={{ background: 'var(--color-border)' }} />
           )}
         </div>
         <div className="pb-4 flex-1">
-          <span className="text-sm font-bold tracking-wider uppercase mb-1 block" style={{ color: exp.color }}>
-            {exp.year}
-          </span>
-          <h3 className="text-lg font-bold mb-1" style={{ color: 'var(--color-text)' }}>
+          <YearBadge year={exp.year} color={exp.color} />
+          <h3 className="text-lg font-bold mb-1 mt-1" style={{ color: 'var(--color-text)' }}>
             {exp.title}
           </h3>
           <h4 className="text-sm font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>
@@ -98,50 +132,53 @@ const TimelineItem = ({ exp, index, total }) => {
       </div>
 
       {/* Desktop layout — 3-column grid */}
-      <div className="hidden md:grid" style={{ gridTemplateColumns: '1fr 60px 1fr', alignItems: 'start' }}>
+      <div className="hidden md:grid" style={{ gridTemplateColumns: '1fr 64px 1fr', alignItems: 'start' }}>
         {/* Left column */}
         <div className={isLeft ? '' : 'order-1'}>
           {isLeft && (
             <motion.div
-              whileHover={{ y: -4, scale: 1.01 }}
+              whileHover={{ y: -5, scale: 1.015 }}
               transition={{ duration: 0.3 }}
-              className="p-6 rounded-2xl relative group cursor-default text-right"
+              className="p-6 rounded-2xl relative group cursor-default text-right gradient-border"
               style={{ background: 'var(--color-card)', border: '1px solid var(--color-border)' }}
             >
               <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                style={{ boxShadow: `0 0 30px ${exp.color}15, inset 0 0 30px ${exp.color}05` }} />
-              <span className="text-sm font-bold tracking-wider uppercase mb-2 block" style={{ color: exp.color }}>{exp.year}</span>
-              <h3 className="text-lg md:text-xl font-bold mb-1" style={{ color: 'var(--color-text)' }}>{exp.title}</h3>
+                style={{ boxShadow: `0 0 40px ${exp.color}15, inset 0 0 40px ${exp.color}05` }} />
+              <YearBadge year={exp.year} color={exp.color} />
+              <h3 className="text-lg md:text-xl font-bold mb-1 mt-2" style={{ color: 'var(--color-text)' }}>{exp.title}</h3>
               <h4 className="text-sm font-medium mb-3" style={{ color: 'var(--color-text-secondary)' }}>{exp.company}</h4>
               <p className="text-sm leading-relaxed" style={{ color: 'var(--color-text-secondary)' }}>{exp.description}</p>
             </motion.div>
           )}
         </div>
 
-        {/* Center column — icon */}
+        {/* Center column — glowing node */}
         <div className="flex justify-center order-2">
-          <div className="w-12 h-12 rounded-full flex items-center justify-center shadow-lg shrink-0 relative z-20"
+          <motion.div
+            className="w-12 h-12 rounded-full flex items-center justify-center shadow-lg shrink-0 relative z-20"
             style={{
               background: `linear-gradient(135deg, ${exp.color}, ${exp.color}88)`,
-              boxShadow: `0 0 20px ${exp.color}40`,
-            }}>
+              boxShadow: `0 0 25px ${exp.color}50`,
+              scale: smoothGlow,
+            }}
+          >
             <Icon size={20} className="text-white" />
-          </div>
+          </motion.div>
         </div>
 
         {/* Right column */}
         <div className={isLeft ? 'order-3' : 'order-3'}>
           {!isLeft && (
             <motion.div
-              whileHover={{ y: -4, scale: 1.01 }}
+              whileHover={{ y: -5, scale: 1.015 }}
               transition={{ duration: 0.3 }}
-              className="p-6 rounded-2xl relative group cursor-default"
+              className="p-6 rounded-2xl relative group cursor-default gradient-border"
               style={{ background: 'var(--color-card)', border: '1px solid var(--color-border)' }}
             >
               <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                style={{ boxShadow: `0 0 30px ${exp.color}15, inset 0 0 30px ${exp.color}05` }} />
-              <span className="text-sm font-bold tracking-wider uppercase mb-2 block" style={{ color: exp.color }}>{exp.year}</span>
-              <h3 className="text-lg md:text-xl font-bold mb-1" style={{ color: 'var(--color-text)' }}>{exp.title}</h3>
+                style={{ boxShadow: `0 0 40px ${exp.color}15, inset 0 0 40px ${exp.color}05` }} />
+              <YearBadge year={exp.year} color={exp.color} />
+              <h3 className="text-lg md:text-xl font-bold mb-1 mt-2" style={{ color: 'var(--color-text)' }}>{exp.title}</h3>
               <h4 className="text-sm font-medium mb-3" style={{ color: 'var(--color-text-secondary)' }}>{exp.company}</h4>
               <p className="text-sm leading-relaxed" style={{ color: 'var(--color-text-secondary)' }}>{exp.description}</p>
             </motion.div>
@@ -165,63 +202,76 @@ const JourneyTimeline = () => {
     restDelta: 0.001,
   });
 
-  return (
-    <section id="journey" className="py-24 md:py-32 relative overflow-hidden" style={{ background: 'var(--color-surface)' }}>
-      {/* Background radial spotlight */}
-      <div className="absolute inset-0 pointer-events-none"
-        style={{
-          background: 'radial-gradient(ellipse 60% 40% at 50% 0%, var(--color-accent-glow), transparent)',
-          opacity: 0.3,
-        }} />
+  // Glow intensity of the line tip
+  const tipGlow = useTransform(scrollYProgress, [0, 1], [0.3, 1]);
+  const smoothTipGlow = useSpring(tipGlow, { stiffness: 100, damping: 30 });
 
-      <div className="container mx-auto px-4 relative z-10" ref={containerRef}>
-        {/* Section header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7 }}
-          className="text-center mb-16 md:mb-24"
-        >
-          <motion.span
-            initial={{ opacity: 0, y: 10 }}
+  return (
+    <SceneWrapper id="journey" glowColor="var(--color-accent-glow)" glowPosition="50% 0%">
+      <div className="py-24 md:py-32 relative" style={{ background: 'var(--color-surface)' }}>
+        <div className="container mx-auto px-4 relative z-10" ref={containerRef}>
+          {/* Section header */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="inline-block text-sm font-semibold tracking-widest uppercase mb-4"
-            style={{ color: 'var(--color-accent)' }}
+            transition={{ duration: 0.8, ease: ease.cinematic }}
+            className="text-center mb-16 md:mb-24"
           >
-            My Journey
-          </motion.span>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4" style={{ color: 'var(--color-text)' }}>
-            How I Got <span className="text-gradient">Here</span>
-          </h2>
-          <p className="max-w-2xl mx-auto text-lg" style={{ color: 'var(--color-text-secondary)' }}>
-            From curious beginner to full-stack architect — a journey of continuous growth and relentless learning.
-          </p>
-        </motion.div>
-
-        <div className="relative">
-          {/* Static background line */}
-          <div className="hidden md:block absolute left-1/2 -translate-x-1/2 top-0 w-[2px] h-full rounded-full"
-            style={{ background: 'var(--color-border)' }} />
-
-          {/* Animated glowing line */}
-          <motion.div
-            style={{ scaleY: lineHeight, transformOrigin: 'top' }}
-            className="hidden md:block absolute left-1/2 -translate-x-1/2 top-0 w-[2px] h-full rounded-full glow-line"
-            css={{ background: 'linear-gradient(180deg, var(--color-gradient-start), var(--color-gradient-mid), var(--color-gradient-end))' }}
-          >
-            <div className="w-full h-full rounded-full"
-              style={{ background: 'linear-gradient(180deg, var(--color-gradient-start), var(--color-gradient-mid), var(--color-gradient-end))' }} />
+            <motion.span
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="inline-block text-sm font-semibold tracking-[0.2em] uppercase mb-4"
+              style={{ color: 'var(--color-accent)' }}
+            >
+              My Journey
+            </motion.span>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-5" style={{ color: 'var(--color-text)' }}>
+              How I Got <span className="text-gradient">Here</span>
+            </h2>
+            <p className="max-w-2xl mx-auto text-lg leading-relaxed" style={{ color: 'var(--color-text-secondary)' }}>
+              From curious beginner to full-stack architect — a journey of continuous growth and relentless learning.
+            </p>
           </motion.div>
 
-          {/* Timeline items */}
-          {experience.map((exp, index) => (
-            <TimelineItem key={index} exp={exp} index={index} total={experience.length} />
-          ))}
+          <div className="relative">
+            {/* Static background line */}
+            <div className="hidden md:block absolute left-1/2 -translate-x-1/2 top-0 w-[2px] h-full rounded-full"
+              style={{ background: 'var(--color-border)' }} />
+
+            {/* Animated glowing line */}
+            <motion.div
+              style={{ scaleY: lineHeight, transformOrigin: 'top' }}
+              className="hidden md:block absolute left-1/2 -translate-x-1/2 top-0 w-[2px] h-full rounded-full"
+            >
+              <div className="w-full h-full rounded-full glow-line"
+                style={{ background: 'linear-gradient(180deg, var(--color-gradient-start), var(--color-gradient-mid), var(--color-gradient-end))' }} />
+              {/* Glowing tip */}
+              <motion.div
+                className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full"
+                style={{
+                  background: 'var(--color-accent)',
+                  boxShadow: '0 0 15px var(--color-accent-glow)',
+                  opacity: smoothTipGlow,
+                }}
+              />
+            </motion.div>
+
+            {/* Timeline items */}
+            {experience.map((exp, index) => (
+              <TimelineItem
+                key={index}
+                exp={exp}
+                index={index}
+                total={experience.length}
+                scrollProgress={scrollYProgress}
+              />
+            ))}
+          </div>
         </div>
       </div>
-    </section>
+    </SceneWrapper>
   );
 };
 

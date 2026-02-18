@@ -1,6 +1,8 @@
 import React, { useRef } from 'react';
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import { motion, useMotionValue, useSpring, useTransform, useScroll } from 'framer-motion';
 import { ExternalLink, Github, ArrowUpRight } from 'lucide-react';
+import SceneWrapper from '../Motion/SceneWrapper';
+import { ease } from '../../hooks/useMotionConfig';
 
 const projects = [
   {
@@ -71,8 +73,20 @@ const ProjectCard = ({ project, index }) => {
   const y = useMotionValue(0);
   const mouseXSpring = useSpring(x, { stiffness: 150, damping: 20 });
   const mouseYSpring = useSpring(y, { stiffness: 150, damping: 20 });
-  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["8deg", "-8deg"]);
-  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-8deg", "8deg"]);
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["10deg", "-10deg"]);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-10deg", "10deg"]);
+
+  // Depth shadow that moves opposite to tilt
+  const shadowX = useTransform(mouseXSpring, [-0.5, 0.5], [15, -15]);
+  const shadowY = useTransform(mouseYSpring, [-0.5, 0.5], [15, -15]);
+
+  // Parallax image movement inside card on scroll
+  const cardRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: cardRef,
+    offset: ['start end', 'end start'],
+  });
+  const imageY = useTransform(scrollYProgress, [0, 1], ['-10%', '10%']);
 
   const handleMouseMove = (e) => {
     if (!ref.current) return;
@@ -88,34 +102,58 @@ const ProjectCard = ({ project, index }) => {
       initial={{ opacity: 0, y: 60 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.7, delay: index * 0.15, ease: [0.25, 0.46, 0.45, 0.94] }}
-      className={project.featured ? 'md:col-span-1' : ''}
+      transition={{ duration: 0.8, delay: index * 0.12, ease: ease.cinematic }}
+      ref={cardRef}
     >
       <motion.div
         ref={ref}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
-        style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
+        style={{
+          rotateX,
+          rotateY,
+          transformStyle: "preserve-3d",
+          boxShadow: useTransform(
+            [shadowX, shadowY],
+            ([sx, sy]) => `${sx}px ${sy}px 40px rgba(0,0,0,0.15)`
+          ),
+        }}
         className="relative group h-[24rem] md:h-[28rem] rounded-2xl overflow-hidden cursor-pointer"
       >
-        {/* Image */}
-        <div className="absolute inset-0">
+        {/* Parallax Image */}
+        <motion.div className="absolute inset-0" style={{ y: imageY }}>
           <img
             src={project.image}
             alt={project.title}
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+            className="w-full h-[130%] object-cover transition-transform duration-700 group-hover:scale-110"
             loading="lazy"
           />
-          {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
-        </div>
+        </motion.div>
+
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/5 
+          group-hover:from-black/95 group-hover:via-black/60 transition-all duration-700" />
 
         {/* Content overlay */}
         <div
           style={{ transform: "translateZ(40px)", transformStyle: "preserve-3d" }}
           className="absolute inset-0 flex flex-col justify-end p-6 md:p-8"
         >
-          {/* Tech stack */}
+          {/* Problem → Impact reveal */}
+          <div className="mb-3 max-h-0 overflow-hidden group-hover:max-h-[120px] transition-all duration-700 ease-out">
+            <div className="flex gap-3 text-xs mb-2">
+              <div className="px-2.5 py-1 rounded-full glass text-emerald-300 font-semibold">
+                Problem
+              </div>
+              <div className="px-2.5 py-1 rounded-full glass text-amber-300 font-semibold">
+                Impact
+              </div>
+            </div>
+            <p className="text-white/60 text-xs leading-relaxed line-clamp-2">{project.problem}</p>
+            <p className="text-white/80 text-xs leading-relaxed mt-1 line-clamp-2">{project.impact}</p>
+          </div>
+
+          {/* Tech stack — reveal on hover */}
           <div className="flex flex-wrap gap-2 mb-4 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
             {project.technologies.map(tech => (
               <span key={tech} className="text-xs px-2.5 py-1 rounded-full glass text-white/90 font-medium">
@@ -130,7 +168,7 @@ const ProjectCard = ({ project, index }) => {
           </h3>
 
           {/* Description */}
-          <p className="text-white/70 text-sm mb-4 line-clamp-2 group-hover:text-white/90 transition-colors duration-500">
+          <p className="text-white/60 text-sm mb-4 line-clamp-2 group-hover:text-white/85 transition-colors duration-500">
             {project.description}
           </p>
 
@@ -172,55 +210,50 @@ const ProjectCard = ({ project, index }) => {
 
 const ProjectShowcase = () => {
   return (
-    <section id="projects" className="py-24 md:py-32 relative overflow-hidden" style={{ background: 'var(--color-surface)' }}>
-      {/* Background */}
-      <div className="absolute inset-0 pointer-events-none"
-        style={{
-          background: 'radial-gradient(ellipse 60% 40% at 20% 80%, var(--color-accent-glow), transparent)',
-          opacity: 0.15,
-        }} />
-
-      <div className="container mx-auto px-4 relative z-10">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7 }}
-          className="text-center mb-16 md:mb-20"
-        >
-          <motion.span
-            initial={{ opacity: 0, y: 10 }}
+    <SceneWrapper id="projects" glowColor="rgba(var(--color-accent-rgb), 0.15)" glowPosition="20% 80%">
+      <div className="py-24 md:py-32 relative" style={{ background: 'var(--color-surface)' }}>
+        <div className="container mx-auto px-4 relative z-10">
+          {/* Header */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="inline-block text-sm font-semibold tracking-widest uppercase mb-4"
-            style={{ color: 'var(--color-accent)' }}
+            transition={{ duration: 0.8, ease: ease.cinematic }}
+            className="text-center mb-16 md:mb-20"
           >
-            Selected Works
-          </motion.span>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4" style={{ color: 'var(--color-text)' }}>
-            Featured <span className="text-gradient">Projects</span>
-          </h2>
-          <p className="max-w-xl mx-auto text-lg" style={{ color: 'var(--color-text-secondary)' }}>
-            A curated collection of projects that showcase my passion for building impactful digital experiences.
-          </p>
-        </motion.div>
+            <motion.span
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="inline-block text-sm font-semibold tracking-[0.2em] uppercase mb-4"
+              style={{ color: 'var(--color-accent)' }}
+            >
+              Selected Works
+            </motion.span>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-5" style={{ color: 'var(--color-text)' }}>
+              Featured <span className="text-gradient">Projects</span>
+            </h2>
+            <p className="max-w-xl mx-auto text-lg leading-relaxed" style={{ color: 'var(--color-text-secondary)' }}>
+              A curated collection of projects that showcase my passion for building impactful digital experiences.
+            </p>
+          </motion.div>
 
-        {/* Featured projects — large cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-8">
-          {projects.filter(p => p.featured).map((project, i) => (
-            <ProjectCard key={project.id} project={project} index={i} />
-          ))}
-        </div>
+          {/* Featured projects */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-8">
+            {projects.filter(p => p.featured).map((project, i) => (
+              <ProjectCard key={project.id} project={project} index={i} />
+            ))}
+          </div>
 
-        {/* Other projects — smaller cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-          {projects.filter(p => !p.featured).map((project, i) => (
-            <ProjectCard key={project.id} project={project} index={i + 3} />
-          ))}
+          {/* Other projects */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+            {projects.filter(p => !p.featured).map((project, i) => (
+              <ProjectCard key={project.id} project={project} index={i + 3} />
+            ))}
+          </div>
         </div>
       </div>
-    </section>
+    </SceneWrapper>
   );
 };
 

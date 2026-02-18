@@ -72,11 +72,9 @@ const Navigation = () => {
       <motion.nav
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+        transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          isScrolled
-            ? 'py-3'
-            : 'py-5'
+          isScrolled ? 'py-3' : 'py-5'
         }`}
         style={{
           background: isScrolled ? 'rgba(var(--color-bg-rgb, 250, 250, 250), 0.7)' : 'transparent',
@@ -100,7 +98,10 @@ const Navigation = () => {
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-1 p-1 rounded-full"
-            style={{ background: isScrolled ? 'var(--color-surface)' : 'transparent', border: isScrolled ? '1px solid var(--color-border)' : 'none' }}>
+            style={{
+              background: isScrolled ? 'var(--color-surface)' : 'transparent',
+              border: isScrolled ? '1px solid var(--color-border)' : 'none',
+            }}>
             {navItems.map((item) => (
               <button
                 key={item.id}
@@ -117,6 +118,11 @@ const Navigation = () => {
                   />
                 )}
                 <span className="relative z-10">{item.label}</span>
+                {/* Hover underline animation */}
+                {activeSection !== item.id && (
+                  <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-0 h-[2px] rounded-full group-hover:w-4/5 transition-all duration-300"
+                    style={{ background: 'var(--color-accent)' }} />
+                )}
               </button>
             ))}
           </div>
@@ -130,7 +136,17 @@ const Navigation = () => {
               className="w-9 h-9 rounded-full flex items-center justify-center transition-colors"
               style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', color: 'var(--color-text-secondary)' }}
             >
-              {isDark ? <Sun size={16} /> : <Moon size={16} />}
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={isDark ? 'sun' : 'moon'}
+                  initial={{ y: -10, opacity: 0, rotate: -30 }}
+                  animate={{ y: 0, opacity: 1, rotate: 0 }}
+                  exit={{ y: 10, opacity: 0, rotate: 30 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  {isDark ? <Sun size={16} /> : <Moon size={16} />}
+                </motion.div>
+              </AnimatePresence>
             </motion.button>
 
             {/* Mobile toggle */}
@@ -149,7 +165,8 @@ const Navigation = () => {
           style={{ width: progressWidth }}
           className="absolute bottom-0 left-0 h-[2px]"
         >
-          <div className="w-full h-full" style={{ background: 'linear-gradient(90deg, var(--color-gradient-start), var(--color-gradient-mid), var(--color-gradient-end))' }} />
+          <div className="w-full h-full"
+            style={{ background: 'linear-gradient(90deg, var(--color-gradient-start), var(--color-gradient-mid), var(--color-gradient-end))' }} />
         </motion.div>
       </motion.nav>
 
