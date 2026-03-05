@@ -154,7 +154,7 @@ const HeroStory = () => {
                 boxShadow: '0 0 50px var(--color-accent-glow), 0 25px 50px rgba(0,0,0,0.3)',
                 border: '2px solid rgba(var(--color-accent-rgb), 0.15)',
               }}>
-              <img src="/profile_img.png" alt="Bhuwan Joshi" className="w-full h-full object-cover" />
+              <img src="/profile_picture.png" alt="Bhuwan Joshi" className="w-full h-full object-cover" />
             </div>
 
             {/* Status badge */}

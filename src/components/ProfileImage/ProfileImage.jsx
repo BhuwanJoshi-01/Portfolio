@@ -99,7 +99,7 @@ const ProfileImage = ({ className = '', size = 'large', animated = true }) => {
         <div className={styles.glassFrame}>
           <div className={styles.innerFrame}>
             <motion.img
-              src="/profile_img.png"
+              src="/profile_picture.png"
               alt="Bhuwan Joshi - Full Stack Developer"
               className={styles.profileImage}
               variants={animated ? floatingVariants : {}}
