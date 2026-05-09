@@ -6,7 +6,6 @@ import AmbientBackground from '../Motion/AmbientBackground';
 const Layout = ({ children }) => {
   const cursorGlowRef = useRef(null);
 
-  // Cursor-following glow effect
   useEffect(() => {
     const handleMouseMove = (e) => {
       if (cursorGlowRef.current) {
@@ -14,24 +13,17 @@ const Layout = ({ children }) => {
         cursorGlowRef.current.style.top = `${e.clientY}px`;
       }
     };
-
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
   return (
-    <div className="min-h-screen noise-overlay" style={{ background: 'var(--color-bg)', color: 'var(--color-text)' }}>
-      {/* Ambient gradient orbs */}
+    <div
+      className="min-h-screen noise-overlay"
+      style={{ background: 'var(--color-bg)', color: 'var(--color-text)' }}
+    >
       <AmbientBackground />
 
-      {/* Cursor glow — hidden on touch devices */}
-      <div
-        ref={cursorGlowRef}
-        className="cursor-glow hidden lg:block"
-        style={{ opacity: 0.6 }}
-      />
-
-      {/* Cinematic page entrance */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -39,16 +31,24 @@ const Layout = ({ children }) => {
         className="relative z-10"
       >
         <Navigation />
-        <main className="flex flex-col w-full">
-          {children}
-        </main>
 
-        {/* Cinematic footer */}
-        <footer className="relative py-12 overflow-hidden" style={{ background: 'var(--color-surface)' }}>
-          {/* Animated gradient separator */}
-          <div className="absolute inset-x-0 top-0 h-px"
-            style={{ background: 'linear-gradient(90deg, transparent 5%, var(--color-gradient-start), var(--color-gradient-mid), var(--color-gradient-end), transparent 95%)' }} />
+        {/* Cursor glow — sits inside the same stacking context as Navigation,
+            above section content (z-10) but below the nav (z-50). */}
+        <div ref={cursorGlowRef} className="cursor-glow hidden lg:block" />
 
+        <main className="flex flex-col w-full">{children}</main>
+
+        <footer
+          className="relative py-12 overflow-hidden"
+          style={{ background: 'var(--color-surface)' }}
+        >
+          <div
+            className="absolute inset-x-0 top-0 h-px"
+            style={{
+              background:
+                'linear-gradient(90deg, transparent 5%, var(--color-gradient-start), var(--color-gradient-mid), var(--color-gradient-end), transparent 95%)',
+            }}
+          />
           <div className="container mx-auto px-4">
             <div className="flex flex-col md:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-3">
@@ -57,7 +57,10 @@ const Layout = ({ children }) => {
                   © {new Date().getFullYear()} Bhuwan Joshi
                 </span>
               </div>
-              <p className="text-xs tracking-wide" style={{ color: 'var(--color-text-secondary)' }}>
+              <p
+                className="text-xs tracking-wide"
+                style={{ color: 'var(--color-text-secondary)' }}
+              >
                 Crafted with passion · Built with React + Framer Motion
               </p>
             </div>

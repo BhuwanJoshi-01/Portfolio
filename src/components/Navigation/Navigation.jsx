@@ -34,7 +34,7 @@ const Navigation = () => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 40);
 
-      const sections = ['home', 'journey', 'skills', 'projects', 'contact'];
+      const sections = ['home', 'journey', 'experience', 'skills', 'projects', 'contact'];
       for (const section of sections) {
         const element = document.getElementById(section);
         if (element) {
@@ -62,6 +62,7 @@ const Navigation = () => {
   const navItems = [
     { id: 'home', label: 'Home' },
     { id: 'journey', label: 'Journey' },
+    { id: 'experience', label: 'Experience' },
     { id: 'skills', label: 'Skills' },
     { id: 'projects', label: 'Work' },
     { id: 'contact', label: 'Contact' },

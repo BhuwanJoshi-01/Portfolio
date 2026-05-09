@@ -1,0 +1,36 @@
+Bhuwan Chakra Joshi
+
+      Kathmandu, Baheshwor Heights • Kathmandu, Bagmati 121001 • bhuwanj766@gmail.com • +977-9862488873 • https://joshibhuwan.com.np
+
+Education
+Sunway College Kathmandu	Kathmandu, Nepal
+Candidate for BSc (Hons) Computer Science with Artificial Intelligence                                                                                           
+Expected by 2028 May
+Relevant Coursework: Data Structures & Algorithms, Machine Learning, Linear Algebra for AI, Database Management Systems, and Software Engineering.	
+Sep 2024 – Current
+
+Little Buddha Academy	 Mahendranagar, Sudurpaschim 
++2 High School Certification
+GPA: 3.0
+ 2024 Mar
+
+Experience
+Sunway College Kathmandu                                                                                                     Kathmandu, Nepal
+RAIN Development Intern                                                                                                         Jan 2026 – Current
+
+
+
+
+
+
+Engineered and deployed high-quality features using a TypeScript, React Native, and Node.js/Firebase stack, improving application responsiveness and user interface fluidity.
+Collaborated on the resolution of critical system bugs, enhancing overall platform reliability and reducing error rates during peak usage.
+Implemented adaptive design principles to ensure optimal functionality and viewing across multiple mobile and web platforms, increasing potential user reach.
+Executed thorough testing and deployment support for new modules, resulting in a documented improvement in customer engagement and system performance.
+
+
+        Skills & Interests
+Technical: Proficient in Python (Django), JavaScript (Express, Node.js, React Native), TypeScript, Firebase, and Git Version Control.
+Language: Nepali (Native), Hindi (Native), English (Proficient – EPT 6.5).
+Interests: Building personal software projects, exploring AI-driven digital products, competitive coding challenges, and emerging tech trends.
+
