@@ -8,7 +8,7 @@ export const profile = {
   name: 'Bhuwan Joshi',
   fullName: 'Bhuwan Chakra Joshi',
   initials: 'BJ',
-  photo: '/profile_picture.png',
+  photo: '/profile_picture.jpg',
   headline: 'Full Stack Developer · React Native + Web',
   roles: ['Full-stack', 'React Native', 'Django', 'Product-minded'],
   location: 'Kathmandu',
@@ -586,7 +586,7 @@ export const skillCategories = [
 export const explorations = [
   { src: '/forgexdev.png', title: 'Forgex', caption: 'Learning platform UI' },
   { src: '/kodesql.png', title: 'KodeSQL', caption: 'SQL challenge editor' },
-  { src: '/profile_picture.png', title: 'Behind the code', caption: 'Bhuwan, Kathmandu' },
+  { src: '/profile_picture.jpg', title: 'Behind the code', caption: 'Bhuwan, Kathmandu' },
   { src: '/quickwash.png', title: 'QuickWash', caption: 'Booking flow, mobile' },
   { src: '/Earthly_wonders.png', title: 'Earthly Wonders', caption: 'Nature-inspired layouts' },
   { src: '/smart_refriedgerator.png', title: 'Smart Refrigerator', caption: 'Arduino + sensors' },
