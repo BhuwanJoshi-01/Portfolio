@@ -1,47 +1,77 @@
 import React, { useRef } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import { Briefcase, MapPin, Calendar, ChevronRight } from 'lucide-react';
+import { MapPin, ArrowDown } from 'lucide-react';
 import SceneWrapper from '../Motion/SceneWrapper';
 import ParallaxScene from '../Motion/ParallaxScene';
 import ParallaxLayer from '../Motion/ParallaxLayer';
-import { ease } from '../../hooks/useMotionConfig';
+import SectionHeader from '../UI/SectionHeader';
+import { experiences } from '../../data/portfolio';
 
-const experiences = [
-  {
-    role: 'Development Intern',
-    company: 'RAIN — Sunway College Kathmandu',
-    location: 'Kathmandu, Nepal',
-    period: 'Jan 2026 — Present',
-    current: true,
-    description:
-      'Building features for the RAIN platform across mobile and web. Day-to-day work spans React Native development in TypeScript and backend integration with Node.js and Firebase.',
-    responsibilities: [
-      'Implement features for mobile and web clients with React Native and TypeScript',
-      'Integrate backend services using Node.js and Firebase',
-      'Collaborate with the team on bug resolution and code review',
-      'Test and deploy modules across iOS, Android, and web targets',
-    ],
-    tech: ['TypeScript', 'React Native', 'Node.js', 'Firebase', 'Expo'],
-    accent: '#6366f1',
-  },
-  {
-    role: 'Software Development Intern',
-    company: 'Prateek Innovations',
-    location: 'Kathmandu, Nepal',
-    period: '2026 — Present',
-    current: true,
-    description:
-      'Contributing to product development as part of a software engineering internship. Working across the stack on user-facing features and backend integrations.',
-    responsibilities: [
-      'Develop and ship user-facing features for web applications',
-      'Build backend integrations and contribute to API work',
-      'Participate in code reviews and design discussions',
-      'Support iteration on product requirements with the team',
-    ],
-    tech: ['JavaScript', 'React', 'Node.js'],
-    accent: '#a855f7',
-  },
-];
+const VersionTrail = ({ versions }) => (
+  <div className="mt-8">
+    <h4 className="mb-4 text-[10px] uppercase tracking-[0.25em] text-muted">Release notes</h4>
+    <ol className="relative flex flex-col gap-3">
+      {versions.map((v, i) => (
+        <React.Fragment key={v.version}>
+          <motion.li
+            initial={{ opacity: 0, x: -16 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: '-40px' }}
+            transition={{ duration: 0.6, delay: 0.2 + i * 0.25, ease: [0.16, 1, 0.3, 1] }}
+            className={`relative flex items-start gap-4 rounded-2xl border p-4 ${
+              v.current ? 'border-transparent bg-bg' : 'border-stroke bg-bg/40'
+            }`}
+          >
+            {v.current && (
+              <span
+                aria-hidden="true"
+                className="absolute -inset-px rounded-2xl accent-gradient-animated opacity-60 -z-10"
+              />
+            )}
+            <span
+              className={`shrink-0 rounded-full px-2.5 py-1 font-mono text-[11px] ${
+                v.current ? 'accent-gradient text-black' : 'border border-stroke text-muted'
+              }`}
+            >
+              {v.version}
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="flex flex-wrap items-baseline justify-between gap-x-3">
+                <span
+                  className={`font-display italic text-lg ${v.current ? 'text-text-primary' : 'text-muted line-through decoration-stroke'}`}
+                >
+                  {v.role}
+                </span>
+                <span className="text-[10px] uppercase tracking-[0.2em] text-muted">{v.period}</span>
+              </span>
+              <span className="mt-1 block text-xs text-muted leading-relaxed">{v.note}</span>
+            </span>
+          </motion.li>
+          {i < versions.length - 1 && (
+            <motion.span
+              initial={{ opacity: 0, y: -6 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.35 + i * 0.25 }}
+              className="flex items-center gap-2 pl-5 text-[10px] uppercase tracking-[0.25em] text-[#89AACC]"
+            >
+              <ArrowDown size={12} /> Promoted
+            </motion.span>
+          )}
+        </React.Fragment>
+      ))}
+      <li className="flex items-center gap-4 rounded-2xl border border-dashed border-stroke p-4 text-muted">
+        <span className="shrink-0 rounded-full border border-dashed border-stroke px-2.5 py-1 font-mono text-[11px]">
+          v{versions.length + 1}.0
+        </span>
+        <span className="text-xs">
+          Next release in development
+          <span className="inline-block w-1.5 h-3 ml-1 align-middle bg-muted animate-pulse" />
+        </span>
+      </li>
+    </ol>
+  </div>
+);
 
 const ExperienceCard = ({ exp, index }) => {
   const cardRef = useRef(null);
@@ -51,6 +81,12 @@ const ExperienceCard = ({ exp, index }) => {
   const sy = useSpring(y, { stiffness: 200, damping: 25 });
   const rotateX = useTransform(sy, [-0.5, 0.5], ['4deg', '-4deg']);
   const rotateY = useTransform(sx, [-0.5, 0.5], ['-4deg', '4deg']);
+  const glowX = useTransform(sx, [-0.5, 0.5], ['0%', '100%']);
+  const glowY = useTransform(sy, [-0.5, 0.5], ['0%', '100%']);
+  const glow = useTransform(
+    [glowX, glowY],
+    ([gx, gy]) => `radial-gradient(400px circle at ${gx} ${gy}, rgba(137,170,204,0.10), transparent 60%)`
+  );
 
   const handleMouseMove = (e) => {
     if (!cardRef.current) return;
@@ -68,139 +104,57 @@ const ExperienceCard = ({ exp, index }) => {
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-80px' }}
-      transition={{ duration: 0.8, delay: index * 0.15, ease: ease.cinematic }}
+      transition={{ duration: 0.9, delay: index * 0.15, ease: [0.25, 0.1, 0.25, 1] }}
+      style={{ perspective: 1200 }}
     >
       <motion.div
         ref={cardRef}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}
-        className="relative p-6 md:p-8 rounded-2xl gradient-border h-full overflow-hidden group"
+        className="group relative h-full rounded-3xl bg-surface border border-stroke p-7 md:p-9 gradient-border"
       >
-        <div
-          className="absolute inset-0 rounded-2xl"
-          style={{
-            background: 'var(--color-card)',
-            border: '1px solid var(--color-border)',
-          }}
-        />
+        <motion.div className="absolute inset-0 rounded-3xl pointer-events-none" style={{ background: glow }} />
+        <span className="absolute top-0 left-8 right-8 h-px accent-gradient opacity-60" />
 
-        <div
-          className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-          style={{
-            boxShadow: `inset 0 0 60px ${exp.accent}10, 0 0 50px ${exp.accent}15`,
-          }}
-        />
-
-        <div
-          className="absolute top-0 left-0 right-0 h-1 rounded-t-2xl"
-          style={{
-            background: `linear-gradient(90deg, ${exp.accent}, ${exp.accent}40)`,
-            opacity: 0.7,
-          }}
-        />
-
-        <div className="relative z-10" style={{ transform: 'translateZ(20px)' }}>
-          <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
-            <span
-              className="inline-flex items-center gap-2 text-xs font-semibold tracking-wider uppercase"
-              style={{ color: 'var(--color-text-secondary)' }}
-            >
-              <Calendar size={13} style={{ color: exp.accent }} />
-              {exp.period}
-            </span>
+        <div className="relative">
+          <div className="flex items-center justify-between flex-wrap gap-3 mb-8">
+            <span className="text-xs text-muted uppercase tracking-[0.25em]">{exp.period}</span>
             {exp.current && (
-              <span
-                className="inline-flex items-center gap-1.5 text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full"
-                style={{
-                  background: 'rgba(34, 197, 94, 0.10)',
-                  color: '#22c55e',
-                  border: '1px solid rgba(34, 197, 94, 0.30)',
-                }}
-              >
-                <span className="relative flex w-2 h-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-60"
-                    style={{ background: '#22c55e' }} />
-                  <span className="relative inline-flex rounded-full h-2 w-2"
-                    style={{ background: '#22c55e' }} />
+              <span className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] px-3 py-1 rounded-full border border-green-500/30 bg-green-500/10 text-green-400">
+                <span className="relative flex w-1.5 h-1.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-60" />
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-400" />
                 </span>
                 Current
               </span>
             )}
           </div>
 
-          <div className="flex items-start gap-4 mb-5">
-            <div
-              className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
-              style={{
-                background: `linear-gradient(135deg, ${exp.accent}, ${exp.accent}60)`,
-                boxShadow: `0 0 20px ${exp.accent}30`,
-              }}
-            >
-              <Briefcase size={20} className="text-white" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <h3
-                className="text-xl md:text-2xl font-bold leading-tight mb-1"
-                style={{ color: 'var(--color-text)' }}
-              >
-                {exp.role}
-              </h3>
-              <p className="text-sm font-semibold" style={{ color: exp.accent }}>
-                {exp.company}
-              </p>
-              <p
-                className="text-xs mt-1 inline-flex items-center gap-1"
-                style={{ color: 'var(--color-text-secondary)' }}
-              >
-                <MapPin size={12} />
-                {exp.location}
-              </p>
-            </div>
-          </div>
-
-          <p
-            className="text-sm leading-relaxed mb-5"
-            style={{ color: 'var(--color-text-secondary)' }}
-          >
-            {exp.description}
+          <h3 className="text-3xl md:text-4xl font-display italic text-text-primary leading-tight">{exp.role}</h3>
+          <p className="mt-2 text-sm text-text-primary/90">{exp.company}</p>
+          <p className="mt-1 text-xs text-muted inline-flex items-center gap-1.5">
+            <MapPin size={12} />
+            {exp.location}
           </p>
 
-          <div className="mb-5">
-            <h4
-              className="text-[10px] font-bold tracking-[0.2em] uppercase mb-3"
-              style={{ color: 'var(--color-text-secondary)' }}
-            >
-              Key Contributions
-            </h4>
-            <ul className="space-y-2">
-              {exp.responsibilities.map((item, i) => (
-                <li
-                  key={i}
-                  className="flex gap-2.5 text-sm leading-relaxed"
-                  style={{ color: 'var(--color-text)' }}
-                >
-                  <ChevronRight
-                    size={16}
-                    className="shrink-0 mt-0.5"
-                    style={{ color: exp.accent }}
-                  />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <p className="mt-6 text-sm text-muted leading-relaxed">{exp.description}</p>
 
-          <div
-            className="flex flex-wrap gap-2 pt-4 border-t"
-            style={{ borderColor: 'var(--color-border)' }}
-          >
+          {exp.versions && <VersionTrail versions={exp.versions} />}
+
+          <h4 className="mt-8 mb-4 text-[10px] uppercase tracking-[0.25em] text-muted">Key Contributions</h4>
+          <ul className="space-y-3">
+            {exp.responsibilities.map((item, i) => (
+              <li key={i} className="flex gap-4 text-sm text-text-primary/90 leading-relaxed">
+                <span className="font-display italic text-muted tabular-nums shrink-0">{String(i + 1).padStart(2, '0')}</span>
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+
+          <div className="mt-8 pt-6 border-t border-stroke flex flex-wrap gap-2">
             {exp.tech.map((t) => (
-              <span
-                key={t}
-                className="px-2.5 py-1 rounded-full text-xs font-medium glass"
-                style={{ color: 'var(--color-text)' }}
-              >
+              <span key={t} className="px-3 py-1 rounded-full text-xs border border-stroke text-text-primary/90">
                 {t}
               </span>
             ))}
@@ -211,88 +165,39 @@ const ExperienceCard = ({ exp, index }) => {
   );
 };
 
-const Experience = () => {
-  return (
-    <SceneWrapper
-      id="experience"
-      glowColor="rgba(var(--color-accent-rgb), 0.15)"
-      glowPosition="50% 50%"
-    >
-      <ParallaxScene
-        className="py-24 md:py-32 relative"
-        style={{ background: 'var(--color-bg)' }}
-      >
-        <ParallaxLayer depth={0.08} blur="far">
-          <div
-            className="absolute top-[10%] right-[-10%] w-[45vw] h-[45vw] rounded-full"
-            style={{
-              background:
-                'radial-gradient(circle, var(--color-gradient-start), transparent 70%)',
-              opacity: 0.14,
-            }}
-          />
-          <div
-            className="absolute bottom-[10%] left-[-10%] w-[40vw] h-[40vw] rounded-full"
-            style={{
-              background:
-                'radial-gradient(circle, var(--color-gradient-end), transparent 70%)',
-              opacity: 0.12,
-            }}
-          />
-        </ParallaxLayer>
+const Experience = () => (
+  <SceneWrapper id="experience" className="bg-bg" glowColor="rgba(137,170,204,0.35)" glowPosition="50% 0%">
+    <ParallaxScene className="py-16 md:py-24 relative">
+      {/* DEPTH 0.2 — horizontal ruling */}
+      <ParallaxLayer depth={0.2} blur="mid">
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: 'linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px)',
+            backgroundSize: '100% 56px',
+          }}
+        />
+      </ParallaxLayer>
 
-        <ParallaxLayer depth={0.2} blur="mid">
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage:
-                'linear-gradient(to bottom, rgba(var(--color-accent-rgb), 0.06) 1px, transparent 1px)',
-              backgroundSize: '100% 56px',
-              opacity: 0.5,
-            }}
-          />
-        </ParallaxLayer>
+      <div className="relative z-10 max-w-[1200px] mx-auto px-6 md:px-10 lg:px-16">
+        <SectionHeader
+          eyebrow="Experience"
+          title={
+            <>
+              Where I&rsquo;m <em>currently building</em>
+            </>
+          }
+          subtitle="Active internships and the work I'm doing right now."
+        />
 
-        <div className="container mx-auto px-4 relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, ease: ease.cinematic }}
-            className="text-center mb-16 md:mb-20"
-          >
-            <motion.span
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="inline-block text-sm font-semibold tracking-[0.2em] uppercase mb-4"
-              style={{ color: 'var(--color-accent)' }}
-            >
-              Experience
-            </motion.span>
-            <h2
-              className="text-4xl md:text-5xl lg:text-6xl font-bold mb-5"
-              style={{ color: 'var(--color-text)' }}
-            >
-              Where I'm <span className="text-gradient">Currently Building</span>
-            </h2>
-            <p
-              className="max-w-xl mx-auto text-lg leading-relaxed"
-              style={{ color: 'var(--color-text-secondary)' }}
-            >
-              Active internships and the work I'm doing right now.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 max-w-6xl mx-auto">
-            {experiences.map((exp, index) => (
-              <ExperienceCard key={exp.company} exp={exp} index={index} />
-            ))}
-          </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 md:gap-6">
+          {experiences.map((exp, index) => (
+            <ExperienceCard key={exp.company} exp={exp} index={index} />
+          ))}
         </div>
-      </ParallaxScene>
-    </SceneWrapper>
-  );
-};
+      </div>
+    </ParallaxScene>
+  </SceneWrapper>
+);
 
 export default Experience;

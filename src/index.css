@@ -2,70 +2,138 @@
 @config "../tailwind.config.js";
 
 /* ═══════════════════════════════════════════
-   CINEMATIC DESIGN SYSTEM — V2
-   Immersive · Atmospheric · Premium
+   MONOCHROME DESIGN SYSTEM — V3
+   Dark · Editorial · Cinematic
    ═══════════════════════════════════════════ */
 
 @layer base {
   :root {
-    --color-bg: #fafafa;
-    --color-bg-rgb: 250, 250, 250;
-    --color-surface: #ffffff;
-    --color-card: #ffffff;
-    --color-text: #0a0a0a;
-    --color-text-secondary: #525252;
-    --color-border: #e5e5e5;
-    --color-accent: #6366f1;
-    --color-accent-rgb: 99, 102, 241;
-    --color-accent-glow: rgba(99, 102, 241, 0.3);
-    --color-gradient-start: #6366f1;
-    --color-gradient-mid: #8b5cf6;
-    --color-gradient-end: #a855f7;
-    --noise-opacity: 0.02;
-    --scene-glow-opacity: 0.12;
+    /* Core tokens (HSL channels — Tailwind wraps them in hsl()) */
+    --bg: 0 0% 4%;
+    --surface: 0 0% 8%;
+    --text: 0 0% 96%;
+    --muted: 0 0% 53%;
+    --stroke: 0 0% 12%;
+    --accent: 0 0% 96%;
+
+    --font-body: 'Inter', sans-serif;
+    --font-display: 'Instrument Serif', serif;
+
+    --accent-from: #89AACC;
+    --accent-to: #4E85BF;
+
+    /* Legacy tokens — consumed by the motion primitives */
+    --color-bg: hsl(var(--bg));
+    --color-bg-rgb: 10, 10, 10;
+    --color-surface: hsl(var(--surface));
+    --color-card: hsl(var(--surface));
+    --color-text: hsl(var(--text));
+    --color-text-secondary: hsl(var(--muted));
+    --color-border: hsl(var(--stroke));
+    --color-accent: var(--accent-from);
+    --color-accent-rgb: 137, 170, 204;
+    --color-accent-glow: rgba(137, 170, 204, 0.22);
+    --color-gradient-start: var(--accent-from);
+    --color-gradient-mid: #6C98C6;
+    --color-gradient-end: var(--accent-to);
+    --noise-opacity: 0.035;
+    --scene-glow-opacity: 0.16;
+
+    color-scheme: dark;
   }
 
-  .dark {
-    --color-bg: #050505;
-    --color-bg-rgb: 5, 5, 5;
-    --color-surface: #0a0a0a;
-    --color-card: #111111;
-    --color-text: #fafafa;
-    --color-text-secondary: #a3a3a3;
-    --color-border: #262626;
-    --color-accent: #818cf8;
-    --color-accent-rgb: 129, 140, 248;
-    --color-accent-glow: rgba(129, 140, 248, 0.25);
-    --color-gradient-start: #818cf8;
-    --color-gradient-mid: #a78bfa;
-    --color-gradient-end: #c084fc;
-    --noise-opacity: 0.03;
-    --scene-glow-opacity: 0.18;
-  }
-}
-
-@layer base {
   html {
     scroll-behavior: smooth;
   }
 
   body {
-    background-color: var(--color-bg);
-    color: var(--color-text);
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: hsl(var(--bg));
+    color: hsl(var(--text));
+    font-family: var(--font-body);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
   }
 
   ::selection {
-    background-color: var(--color-accent);
+    background-color: var(--accent-to);
     color: white;
   }
 }
 
 /* ═══════════════════════════════════════════
-   CINEMATIC SCROLLBAR
+   ACCENT GRADIENT
+   ═══════════════════════════════════════════ */
+@utility accent-gradient {
+  background: linear-gradient(90deg, var(--accent-from) 0%, var(--accent-to) 100%);
+}
+
+/* Animated variant for hover rings / borders */
+@utility accent-gradient-animated {
+  background: linear-gradient(90deg, var(--accent-from), var(--accent-to), var(--accent-from), var(--accent-to));
+  background-size: 300% 100%;
+  animation: gradient-shift 6s ease infinite;
+}
+
+@utility text-accent-gradient {
+  background: linear-gradient(90deg, var(--accent-from), var(--accent-to));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Logo ring — gradient direction flips on hover */
+.logo-ring {
+  background: linear-gradient(90deg, var(--accent-from), var(--accent-to));
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.logo-ring:hover {
+  background: linear-gradient(270deg, var(--accent-from), var(--accent-to));
+  transform: scale(1.1);
+}
+
+/* Halftone dot screen for imagery */
+@utility halftone {
+  background-image: radial-gradient(circle, #000 1px, transparent 1px);
+  background-size: 4px 4px;
+}
+
+/* ═══════════════════════════════════════════
+   KEYFRAMES
+   ═══════════════════════════════════════════ */
+@keyframes scroll-down {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(200%); }
+}
+
+@keyframes role-fade-in {
+  0% { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes fade-rise {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Manifesto entrance — only plays once the section has the .is-visible flag */
+.fade-rise,
+.fade-rise-delay,
+.fade-rise-delay-2 {
+  opacity: 0;
+}
+.is-visible .fade-rise { animation: fade-rise 0.8s ease-out both; }
+.is-visible .fade-rise-delay { animation: fade-rise 0.8s ease-out 0.2s both; }
+.is-visible .fade-rise-delay-2 { animation: fade-rise 0.8s ease-out 0.4s both; }
+
+/* ═══════════════════════════════════════════
+   SCROLLBAR
    ═══════════════════════════════════════════ */
 ::-webkit-scrollbar {
   width: 5px;
@@ -74,11 +142,11 @@
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-border);
+  background: hsl(var(--stroke));
   border-radius: 999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-accent);
+  background: var(--accent-to);
 }
 
 /* ═══════════════════════════════════════════
@@ -88,7 +156,7 @@
   content: '';
   position: fixed;
   inset: 0;
-  z-index: 9999;
+  z-index: 9998;
   pointer-events: none;
   opacity: var(--noise-opacity);
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
@@ -100,14 +168,14 @@
    GLASSMORPHISM
    ═══════════════════════════════════════════ */
 .glass {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.04);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .glass-strong {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -122,8 +190,7 @@
 }
 
 .glow-line {
-  box-shadow: 0 0 8px var(--color-accent-glow),
-              0 0 20px var(--color-accent-glow);
+  box-shadow: 0 0 8px rgba(137, 170, 204, 0.35);
 }
 
 .text-gradient {
@@ -155,11 +222,6 @@
   25% { transform: translate(-25px, 15px) scale(1.03); }
   50% { transform: translate(15px, -20px) scale(0.98); }
   75% { transform: translate(-10px, -15px) scale(1.02); }
-}
-
-@keyframes pulse-glow {
-  0%, 100% { opacity: 0.15; transform: scale(1); }
-  50% { opacity: 0.3; transform: scale(1.08); }
 }
 
 @keyframes flare-pulse {
@@ -208,18 +270,6 @@
 }
 
 /* ═══════════════════════════════════════════
-   SCROLL INDICATOR (Mouse Icon)
-   ═══════════════════════════════════════════ */
-@keyframes scroll-bounce {
-  0%, 100% { transform: translateY(0); opacity: 1; }
-  50% { transform: translateY(6px); opacity: 0.3; }
-}
-
-.scroll-indicator-dot {
-  animation: scroll-bounce 2s ease-in-out infinite;
-}
-
-/* ═══════════════════════════════════════════
    CURSOR GLOW (follows mouse via JS)
    ═══════════════════════════════════════════ */
 .cursor-glow {
@@ -231,8 +281,8 @@
   z-index: 30;
   background: radial-gradient(
     circle,
-    rgba(var(--color-accent-rgb), 0.22) 0%,
-    rgba(var(--color-accent-rgb), 0.08) 30%,
+    rgba(var(--color-accent-rgb), 0.14) 0%,
+    rgba(var(--color-accent-rgb), 0.05) 30%,
     transparent 65%
   );
   transform: translate(-50%, -50%);
@@ -240,15 +290,6 @@
   will-change: left, top;
   filter: blur(20px);
   mix-blend-mode: plus-lighter;
-}
-
-.dark .cursor-glow {
-  background: radial-gradient(
-    circle,
-    rgba(var(--color-accent-rgb), 0.32) 0%,
-    rgba(var(--color-accent-rgb), 0.12) 30%,
-    transparent 65%
-  );
 }
 
 /* ═══════════════════════════════════════════
@@ -270,7 +311,7 @@
 }
 
 /* ═══════════════════════════════════════════
-   ANIMATED GRADIENT BORDER
+   ANIMATED GRADIENT BORDER (hover)
    ═══════════════════════════════════════════ */
 @keyframes gradient-rotate {
   0% { --gradient-angle: 0deg; }
@@ -285,7 +326,6 @@
 
 .gradient-border {
   position: relative;
-  border-radius: 1rem;
 }
 
 .gradient-border::before {
@@ -296,10 +336,11 @@
   padding: 1px;
   background: conic-gradient(
     from var(--gradient-angle),
-    var(--color-gradient-start),
-    var(--color-gradient-mid),
-    var(--color-gradient-end),
-    var(--color-gradient-start)
+    var(--accent-from),
+    transparent 30%,
+    var(--accent-to) 50%,
+    transparent 80%,
+    var(--accent-from)
   );
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
@@ -308,6 +349,7 @@
   opacity: 0;
   transition: opacity 0.5s ease;
   pointer-events: none;
+  z-index: 2;
 }
 
 .gradient-border:hover::before {
@@ -315,35 +357,27 @@
 }
 
 /* ═══════════════════════════════════════════
-   MAGNETIC BUTTON
+   PRINT — resume page prints light
    ═══════════════════════════════════════════ */
-.btn-magnetic {
-  position: relative;
-  overflow: hidden;
-  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
+@media print {
+  :root {
+    --bg: 0 0% 100%;
+    --surface: 0 0% 100%;
+    --text: 0 0% 6%;
+    --muted: 0 0% 35%;
+    --stroke: 0 0% 85%;
+  }
 
-.btn-magnetic::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255,255,255,0.15), transparent 60%);
-}
+  .no-print,
+  .cursor-glow,
+  .noise-overlay::before {
+    display: none !important;
+  }
 
-.btn-magnetic:hover::after {
-  opacity: 1;
-}
-
-/* ═══════════════════════════════════════════
-   COUNTER ANIMATION
-   ═══════════════════════════════════════════ */
-@property --num {
-  syntax: "<integer>";
-  initial-value: 0;
-  inherits: false;
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
 }
 
 /* ═══════════════════════════════════════════
@@ -365,9 +399,5 @@
   .light-flare,
   .cursor-glow {
     display: none !important;
-  }
-
-  .scroll-indicator-dot {
-    animation: none;
   }
 }

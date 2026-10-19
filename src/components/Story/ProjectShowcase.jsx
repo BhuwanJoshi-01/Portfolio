@@ -1,101 +1,36 @@
-import React, { useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { motion, useMotionValue, useSpring, useTransform, useScroll } from 'framer-motion';
-import { ExternalLink, Github, ArrowUpRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import SceneWrapper from '../Motion/SceneWrapper';
-import ParallaxScene from '../Motion/ParallaxScene';
-import ParallaxLayer from '../Motion/ParallaxLayer';
-import { ease } from '../../hooks/useMotionConfig';
+import SectionHeader from '../UI/SectionHeader';
+import PillButton from '../UI/PillButton';
+import ProjectDrawer from '../Site/ProjectDrawer';
+import ProjectIndex from '../Site/ProjectIndex';
+import { projects, socialLinks, splitTitle } from '../../data/portfolio';
 
-const projects = [
-  {
-    id: 1,
-    title: 'Forgex - Developer Learning Platform',
-    description:
-      'A full-stack learning and mentoring platform for developers. Includes interactive resources, mentorship features, and modern responsive UI built for scale.',
-    problem: 'Developers lacked a unified platform combining learning resources with direct mentorship.',
-    impact: 'Serving real users with structured paths and interactive content.',
-    image: '/forgexdev.png',
-    technologies: ['Jinja', 'FastAPI', 'PostgreSQL', 'Django', 'Docker', 'WebRTC'],
-    liveUrl: 'https://forgexdev.me',
-    githubUrl: '#',
-    featured: true,
-  },
-  {
-    id: 3,
-    title: 'KodeSQL',
-    description:
-      'Full-stack web app for students to learn and solve SQL problems. Features challenge solving and an interactive interface.',
-    problem: 'Students needed a hands-on environment to practice SQL with instant feedback.',
-    impact: 'Interactive challenges with real-time query execution and validation.',
-    image: '/kodesql.png',
-    technologies: ['Jinja', 'Django', 'PostgreSQL', 'Monaco Editor', 'MySQL'],
-    liveUrl: 'https://kodesql.in',
-    githubUrl: '#',
-    featured: true,
-  },
-  {
-    id: 5,
-    title: 'QuickWash - Car Wash Booking',
-    description:
-      'A comprehensive car wash booking platform with Node.js backend and React Native frontend. Features phone authentication, role-based access control, and real-time booking.',
-    problem: 'Car wash businesses needed a modern booking system with real-time availability.',
-    impact: 'Full-stack mobile app with real-time features and role-based access.',
-    image: '/quickwash.png',
-    technologies: ['Node.js', 'Express', 'Firebase', 'React Native', 'Expo'],
-    liveUrl: '#',
-    githubUrl: '#',
-    featured: true,
-  },
-  {
-    id: 2,
-    title: 'Earthly Wonders',
-    description:
-      'Frontend project focused on nature. Showcases responsive design and creative layouts inspired by the environment.',
-    problem: 'Exploring creative visual design through nature-inspired aesthetics.',
-    impact: 'Beautiful responsive layouts demonstrating CSS mastery.',
-    image: '/Earthly_wonders.png',
-    technologies: ['HTML', 'CSS'],
-    liveUrl: '#',
-    githubUrl: 'https://github.com/BhuwanJoshi-01/WEB_Project_Nature',
-    featured: false,
-  },
-  {
-    id: 4,
-    title: 'Smart Refrigerator',
-    description:
-      'An Arduino-based smart refrigerator project using C++ and sensors for real-time monitoring.',
-    problem: 'Automating refrigerator monitoring with IoT sensors.',
-    impact: 'Real-time temperature and inventory monitoring system.',
-    image: '/smart_refriedgerator.png',
-    technologies: ['C++', 'Arduino', 'Sensors'],
-    liveUrl: 'https://www.tinkercad.com/things/j1lbvtGtLyl-smart-refriedgerator',
-    githubUrl: 'https://github.com/BhuwanJoshi-01/Smart_Refrigerator_Using_Arduino',
-    featured: false,
-  },
-];
+// Bento rhythm: 7/5, 5/7, then a full-width closer
+// 6 featured cards → three clean 7/5 rows
+const SPANS = ['md:col-span-7', 'md:col-span-5', 'md:col-span-5', 'md:col-span-7', 'md:col-span-7', 'md:col-span-5'];
+const HEIGHTS = ['md:h-[460px]', 'md:h-[460px]', 'md:h-[420px]', 'md:h-[420px]', 'md:h-[440px]', 'md:h-[440px]'];
 
-const ProjectCard = ({ project, index }) => {
-  const ref = useRef(null);
+const ProjectCard = ({ project, index, onOpen }) => {
+  const tiltRef = useRef(null);
+  const cardRef = useRef(null);
+  const { name, tagline } = splitTitle(project.title);
+
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  const mouseXSpring = useSpring(x, { stiffness: 150, damping: 20 });
-  const mouseYSpring = useSpring(y, { stiffness: 150, damping: 20 });
-  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ['10deg', '-10deg']);
-  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ['-10deg', '10deg']);
+  const sx = useSpring(x, { stiffness: 150, damping: 20 });
+  const sy = useSpring(y, { stiffness: 150, damping: 20 });
+  const rotateX = useTransform(sy, [-0.5, 0.5], ['4deg', '-4deg']);
+  const rotateY = useTransform(sx, [-0.5, 0.5], ['-4deg', '4deg']);
 
-  const shadowX = useTransform(mouseXSpring, [-0.5, 0.5], [15, -15]);
-  const shadowY = useTransform(mouseYSpring, [-0.5, 0.5], [15, -15]);
-
-  const cardRef = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: cardRef,
-    offset: ['start end', 'end start'],
-  });
-  const imageY = useTransform(scrollYProgress, [0, 1], ['-10%', '10%']);
+  const { scrollYProgress } = useScroll({ target: cardRef, offset: ['start end', 'end start'] });
+  const imageY = useTransform(scrollYProgress, [0, 1], ['-8%', '8%']);
 
   const handleMouseMove = (e) => {
-    if (!ref.current) return;
-    const rect = ref.current.getBoundingClientRect();
+    if (!tiltRef.current) return;
+    const rect = tiltRef.current.getBoundingClientRect();
     x.set((e.clientX - rect.left) / rect.width - 0.5);
     y.set((e.clientY - rect.top) / rect.height - 0.5);
   };
@@ -105,199 +40,108 @@ const ProjectCard = ({ project, index }) => {
   };
 
   return (
-    <motion.div
+    <motion.article
+      ref={cardRef}
       initial={{ opacity: 0, y: 60 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-80px' }}
-      transition={{ duration: 0.8, delay: index * 0.12, ease: ease.cinematic }}
-      ref={cardRef}
+      transition={{ duration: 0.9, delay: (index % 2) * 0.12, ease: [0.25, 0.1, 0.25, 1] }}
+      className={`${SPANS[index % SPANS.length]} flex flex-col gap-4`}
+      style={{ perspective: 1200 }}
     >
-      <motion.div
-        ref={ref}
+      <motion.button
+        ref={tiltRef}
+        type="button"
+        onClick={() => onOpen(project)}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
-        style={{
-          rotateX,
-          rotateY,
-          transformStyle: 'preserve-3d',
-          boxShadow: useTransform(
-            [shadowX, shadowY],
-            ([sx, sy]) => `${sx}px ${sy}px 40px rgba(0,0,0,0.15)`
-          ),
-        }}
-        className="relative group h-[24rem] md:h-[28rem] rounded-2xl overflow-hidden cursor-pointer"
+        style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}
+        aria-label={`View ${project.title}`}
+        className={`group relative w-full aspect-[4/3] ${HEIGHTS[index % HEIGHTS.length]} md:aspect-auto overflow-hidden rounded-3xl bg-surface border border-stroke text-left cursor-pointer`}
       >
-        <motion.div className="absolute inset-0" style={{ y: imageY }}>
+        <motion.div className="absolute inset-[-10%]" style={{ y: imageY }}>
           <img
             src={project.image}
-            alt={project.title}
-            className="w-full h-[130%] object-cover transition-transform duration-700 group-hover:scale-110"
+            alt=""
             loading="lazy"
+            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
           />
         </motion.div>
 
-        <div
-          className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/5
-          group-hover:from-black/95 group-hover:via-black/60 transition-all duration-700"
-        />
+        <div className="absolute inset-0 halftone opacity-20 mix-blend-multiply pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
 
-        <div
-          style={{ transform: 'translateZ(40px)', transformStyle: 'preserve-3d' }}
-          className="absolute inset-0 flex flex-col justify-end p-6 md:p-8"
-        >
-          <div className="mb-3 max-h-0 overflow-hidden group-hover:max-h-[120px] transition-all duration-700 ease-out">
-            <div className="flex gap-3 text-xs mb-2">
-              <div className="px-2.5 py-1 rounded-full glass text-emerald-300 font-semibold">
-                Problem
-              </div>
-              <div className="px-2.5 py-1 rounded-full glass text-amber-300 font-semibold">
-                Impact
-              </div>
-            </div>
-            <p className="text-white/60 text-xs leading-relaxed line-clamp-2">{project.problem}</p>
-            <p className="text-white/80 text-xs leading-relaxed mt-1 line-clamp-2">
-              {project.impact}
-            </p>
-          </div>
+        <span className="absolute top-5 left-5 text-[11px] uppercase tracking-[0.25em] text-white/80 tabular-nums">
+          {String(index + 1).padStart(2, '0')}
+        </span>
 
-          <div className="flex flex-wrap gap-2 mb-4 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
-            {project.technologies.map((tech) => (
-              <span
-                key={tech}
-                className="text-xs px-2.5 py-1 rounded-full glass text-white/90 font-medium"
-              >
-                {tech}
-              </span>
-            ))}
-          </div>
+        <div className="absolute inset-0 bg-bg/70 backdrop-blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
+          <span className="relative rounded-full p-[1.5px] accent-gradient-animated translate-y-3 group-hover:translate-y-0 transition-transform duration-500">
+            <span className="flex items-center gap-2 rounded-full bg-white text-black px-5 py-2.5 text-sm">
+              View — <span className="font-display italic text-base">{name}</span>
+            </span>
+          </span>
+        </div>
+      </motion.button>
 
-          <h3 className="text-2xl md:text-3xl font-bold text-white mb-2 group-hover:-translate-y-1 transition-transform duration-500">
-            {project.title}
+      <div className="flex items-start justify-between gap-4 px-1">
+        <div>
+          <h3 className="text-lg text-text-primary">
+            <span className="font-display italic text-2xl">{name}</span>
+            {tagline && <span className="text-muted text-sm"> — {tagline}</span>}
           </h3>
-
-          <p className="text-white/60 text-sm mb-4 line-clamp-2 group-hover:text-white/85 transition-colors duration-500">
-            {project.description}
-          </p>
-
-          <div className="flex gap-3 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 delay-100">
-            {project.liveUrl !== '#' && (
-              <a
-                href={project.liveUrl}
-                target="_blank"
-                rel="noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                className="flex items-center gap-1.5 text-sm font-medium text-white px-4 py-2 rounded-full glass hover:bg-white/20 transition-colors"
-              >
-                <ExternalLink size={14} /> Live
-              </a>
-            )}
-            {project.githubUrl !== '#' && (
-              <a
-                href={project.githubUrl}
-                target="_blank"
-                rel="noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                className="flex items-center gap-1.5 text-sm font-medium text-white px-4 py-2 rounded-full glass hover:bg-white/20 transition-colors"
-              >
-                <Github size={14} /> Code
-              </a>
-            )}
-          </div>
+          <p className="mt-1 text-sm text-muted leading-relaxed line-clamp-2 max-w-xl">{project.description}</p>
         </div>
-
-        <div className="absolute top-4 right-4 w-10 h-10 rounded-full glass flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 group-hover:rotate-45">
-          <ArrowUpRight size={18} className="text-white" />
-        </div>
-      </motion.div>
-    </motion.div>
+        <ul className="hidden sm:flex flex-wrap justify-end gap-1.5 max-w-[45%] shrink-0">
+          {project.technologies.slice(0, 3).map((t) => (
+            <li key={t} className="px-2.5 py-1 rounded-full border border-stroke text-[11px] text-muted whitespace-nowrap">
+              {t}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </motion.article>
   );
 };
 
 const ProjectShowcase = () => {
+  const [active, setActive] = useState(null);
+  const close = useCallback(() => setActive(null), []);
+  const github = socialLinks.find((s) => s.label === 'GitHub')?.href;
+  const visible = projects.filter((p) => !p.hidden);
+  const featured = visible.filter((p) => p.featured);
+  const rest = visible.filter((p) => !p.featured);
+
   return (
-    <SceneWrapper
-      id="projects"
-      glowColor="rgba(var(--color-accent-rgb), 0.15)"
-      glowPosition="20% 80%"
-    >
-      <ParallaxScene
-        className="py-24 md:py-32 relative"
-        style={{ background: 'var(--color-surface)' }}
-      >
-        {/* DEPTH 0.08 — cyan→indigo bottom-left mesh */}
-        <ParallaxLayer depth={0.08} blur="far">
-          <div
-            className="absolute bottom-[-10%] left-[-10%] w-[55vw] h-[55vw] rounded-full"
-            style={{
-              background:
-                'radial-gradient(circle, var(--color-gradient-start), transparent 70%)',
-              opacity: 0.16,
-            }}
+    <SceneWrapper id="work" className="bg-bg">
+      <div className="py-12 md:py-16">
+        <div className="max-w-[1200px] mx-auto px-6 md:px-10 lg:px-16">
+          <SectionHeader
+            eyebrow="Selected Work"
+            title={
+              <>
+                Featured <em>projects</em>
+              </>
+            }
+            subtitle="A selection of projects I've worked on, from concept to launch."
+            action={
+              <PillButton variant="outline" href={github} target="_blank" rel="noreferrer">
+                View all work <ArrowRight size={16} />
+              </PillButton>
+            }
           />
-        </ParallaxLayer>
 
-        {/* DEPTH 0.20 — vertical line grid (spec-sheet mood) */}
-        <ParallaxLayer depth={0.2} blur="mid">
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage:
-                'linear-gradient(to right, rgba(var(--color-accent-rgb), 0.08) 1px, transparent 1px)',
-              backgroundSize: '64px 100%',
-              opacity: 0.4,
-            }}
-          />
-        </ParallaxLayer>
-
-        <div className="container mx-auto px-4 relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, ease: ease.cinematic }}
-            className="text-center mb-16 md:mb-20"
-          >
-            <motion.span
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="inline-block text-sm font-semibold tracking-[0.2em] uppercase mb-4"
-              style={{ color: 'var(--color-accent)' }}
-            >
-              Selected Works
-            </motion.span>
-            <h2
-              className="text-4xl md:text-5xl lg:text-6xl font-bold mb-5"
-              style={{ color: 'var(--color-text)' }}
-            >
-              Featured <span className="text-gradient">Projects</span>
-            </h2>
-            <p
-              className="max-w-xl mx-auto text-lg leading-relaxed"
-              style={{ color: 'var(--color-text-secondary)' }}
-            >
-              A curated collection of projects that showcase my passion for building impactful
-              digital experiences.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-8">
-            {projects
-              .filter((p) => p.featured)
-              .map((project, i) => (
-                <ProjectCard key={project.id} project={project} index={i} />
-              ))}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-x-5 gap-y-10 md:gap-x-6 md:gap-y-12">
+            {featured.map((project, i) => (
+              <ProjectCard key={project.id} project={project} index={i} onOpen={setActive} />
+            ))}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-            {projects
-              .filter((p) => !p.featured)
-              .map((project, i) => (
-                <ProjectCard key={project.id} project={project} index={i + 3} />
-              ))}
-          </div>
+          {rest.length > 0 && <ProjectIndex projects={rest} onOpen={setActive} />}
         </div>
-      </ParallaxScene>
+      </div>
+
+      <ProjectDrawer project={active} onClose={close} />
     </SceneWrapper>
   );
 };

@@ -4,38 +4,43 @@ export default {
         "./index.html",
         "./src/**/*.{js,ts,jsx,tsx}",
     ],
-    darkMode: 'class',
     theme: {
         extend: {
             fontFamily: {
                 sans: ['Inter', 'system-ui', 'sans-serif'],
+                body: ['Inter', 'sans-serif'],
+                display: ['"Instrument Serif"', 'serif'],
             },
             colors: {
-                dark: {
-                    bg: '#0a0a0a',
-                    surface: '#121212',
-                    card: '#1e1e1e',
-                },
-                primary: {
-                    50: '#eff6ff',
-                    100: '#dbeafe',
-                    200: '#bfdbfe',
-                    300: '#93c5fd',
-                    400: '#60a5fa',
-                    500: '#3b82f6',
-                    600: '#2563eb',
-                    700: '#1d4ed8',
-                    800: '#1e40af',
-                    900: '#1e3a8a',
-                    950: '#172554',
-                }
+                bg: 'hsl(var(--bg))',
+                surface: 'hsl(var(--surface))',
+                'text-primary': 'hsl(var(--text))',
+                muted: 'hsl(var(--muted))',
+                stroke: 'hsl(var(--stroke))',
+                accent: 'hsl(var(--accent))',
             },
             animation: {
+                'scroll-down': 'scroll-down 1.5s ease-in-out infinite',
+                'role-fade-in': 'role-fade-in 0.4s ease-out',
+                'gradient-shift': 'gradient-shift 6s ease infinite',
                 'fade-in': 'fadeIn 0.5s ease-out forwards',
                 'slide-up': 'slideUp 0.5s ease-out forwards',
                 'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
             },
             keyframes: {
+                'scroll-down': {
+                    '0%': { transform: 'translateY(-100%)' },
+                    '100%': { transform: 'translateY(200%)' },
+                },
+                'role-fade-in': {
+                    '0%': { opacity: '0', transform: 'translateY(8px)' },
+                    '100%': { opacity: '1', transform: 'translateY(0)' },
+                },
+                'gradient-shift': {
+                    '0%': { backgroundPosition: '0% 50%' },
+                    '50%': { backgroundPosition: '100% 50%' },
+                    '100%': { backgroundPosition: '0% 50%' },
+                },
                 fadeIn: {
                     '0%': { opacity: '0' },
                     '100%': { opacity: '1' },

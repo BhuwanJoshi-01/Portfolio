@@ -1,22 +1,48 @@
-import React, { useState } from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Phone, MapPin, Linkedin, Github, Send, ArrowUpRight, Globe } from 'lucide-react';
-import ParticleField from '../Motion/ParticleField';
-import SceneWrapper from '../Motion/SceneWrapper';
-import ParallaxScene from '../Motion/ParallaxScene';
-import ParallaxLayer from '../Motion/ParallaxLayer';
+import gsap from 'gsap';
+import { Mail, Phone, MapPin, ArrowUpRight, Send } from 'lucide-react';
+import HlsVideo from '../UI/HlsVideo';
+import PillButton from '../UI/PillButton';
+import FooterBar from '../UI/FooterBar';
 import MagneticButton from '../Motion/MagneticButton';
-import { ease } from '../../hooks/useMotionConfig';
+import { profile } from '../../data/portfolio';
+
+const MARQUEE = Array.from({ length: 10 }, () => 'BUILDING THE FUTURE • ').join('');
+const revealEase = [0.25, 0.1, 0.25, 1];
+
+const contactMethods = [
+  { icon: Mail, label: 'Email', value: profile.email, href: `mailto:${profile.email}` },
+  { icon: Phone, label: 'Phone', value: profile.phone, href: profile.phoneHref },
+  { icon: MapPin, label: 'Location', value: profile.address, href: null },
+];
+
+const Field = ({ label, id, as = 'input', ...props }) => {
+  const Tag = as;
+  return (
+    <label htmlFor={id} className="block">
+      <span className="block text-[10px] uppercase tracking-[0.25em] text-muted mb-2">{label}</span>
+      <Tag
+        id={id}
+        name={id}
+        required
+        className="w-full bg-transparent border-b border-stroke focus:border-[#89AACC] px-0 py-3 text-sm text-text-primary placeholder:text-muted/60 outline-none transition-colors resize-none"
+        {...props}
+      />
+    </label>
+  );
+};
 
 const ContactStory = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: '',
-  });
+  const marqueeRef = useRef(null);
+  const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
 
-  const [focusedField, setFocusedField] = useState(null);
+  useLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.to(marqueeRef.current, { xPercent: -50, duration: 40, ease: 'none', repeat: -1 });
+    });
+    return () => ctx.revert();
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -26,335 +52,134 @@ const ContactStory = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const mailto =
-      `mailto:bhuwanj766@gmail.com?subject=${encodeURIComponent(formData.subject || 'Contact Form Submission')}` +
-      `&body=${encodeURIComponent(
-        `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`
-      )}`;
+      `mailto:${profile.email}?subject=${encodeURIComponent(formData.subject || 'Contact Form Submission')}` +
+      `&body=${encodeURIComponent(`Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`)}`;
     window.location.href = mailto;
   };
 
-  const contactMethods = [
-    { icon: Mail, label: 'Email', value: 'bhuwanj766@gmail.com', href: 'mailto:bhuwanj766@gmail.com' },
-    { icon: Phone, label: 'Phone', value: '+977 9862488873', href: 'tel:+9779862488873' },
-    { icon: MapPin, label: 'Location', value: 'Baheshwor Heights, Kathmandu', href: null },
-  ];
-
-  const socialLinks = [
-    { icon: Linkedin, label: 'LinkedIn', href: 'https://www.linkedin.com/in/bhuwanjoshi-np/', color: '#0077b5' },
-    { icon: Github, label: 'GitHub', href: 'https://github.com/BhuwanJoshi-01', color: '#6e5494' },
-  ];
-
-  const inputStyle = (fieldName) => ({
-    background: 'var(--color-surface)',
-    border:
-      focusedField === fieldName
-        ? '1px solid var(--color-accent)'
-        : '1px solid var(--color-border)',
-    color: 'var(--color-text)',
-    boxShadow:
-      focusedField === fieldName ? '0 0 20px var(--color-accent-glow)' : 'none',
-    transition: 'all 0.3s ease',
-  });
-
   return (
-    <SceneWrapper
-      id="contact"
-      isLast
-      glowColor="rgba(var(--color-accent-rgb), 0.12)"
-      glowPosition="50% 100%"
-    >
-      <ParallaxScene
-        className="py-24 md:py-32 relative"
-        style={{ background: 'var(--color-bg)' }}
-      >
-        {/* DEPTH 0.10 — top-center indigo radial fading down */}
-        <ParallaxLayer depth={0.1} blur="far">
-          <div
-            className="absolute top-[-15%] left-1/2 -translate-x-1/2 w-[60vw] h-[40vw] rounded-full"
-            style={{
-              background: 'radial-gradient(circle, var(--color-accent), transparent 70%)',
-              opacity: 0.14,
-            }}
-          />
-        </ParallaxLayer>
+    <section id="contact" className="relative bg-bg pt-16 md:pt-20 pb-8 md:pb-12 overflow-hidden">
+      {/* Background video — mirrored hero stream */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <HlsVideo lazy className="scale-y-[-1]" />
+        <div className="absolute inset-0 bg-black/60" />
+        <div className="absolute top-0 left-0 right-0 h-48 bg-gradient-to-b from-bg to-transparent" />
+      </div>
 
-        <ParticleField count={15} />
+      {/* Marquee */}
+      <div className="relative overflow-hidden py-6 md:py-10 select-none" aria-hidden="true">
+        <div ref={marqueeRef} className="flex w-max whitespace-nowrap">
+          {[0, 1].map((k) => (
+            <span key={k} className="font-display italic text-6xl md:text-8xl lg:text-9xl text-text-primary/90 pr-4">
+              {MARQUEE}
+            </span>
+          ))}
+        </div>
+      </div>
 
-        <div className="container mx-auto px-4 relative z-10">
+      <div className="relative z-10 max-w-[1200px] mx-auto px-6 md:px-10 lg:px-16">
+        {/* CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-100px' }}
+          transition={{ duration: 1, ease: revealEase }}
+          className="flex flex-col items-center text-center pt-12 md:pt-16 pb-16 md:pb-24"
+        >
+          <div className="flex items-center gap-3 mb-5">
+            <span className="w-8 h-px bg-stroke" />
+            <span className="text-xs text-muted uppercase tracking-[0.3em]">Get in touch</span>
+            <span className="w-8 h-px bg-stroke" />
+          </div>
+          <h2 className="text-4xl md:text-6xl lg:text-7xl font-normal tracking-[-0.03em] leading-[1.05] text-text-primary max-w-4xl">
+            Let&rsquo;s create something <em className="font-display italic tracking-normal">extraordinary</em>
+          </h2>
+          <p className="mt-5 text-sm md:text-base text-muted max-w-xl leading-relaxed">
+            Have a project in mind or want to discuss the latest tech? I&rsquo;m always open to new opportunities.
+          </p>
+          <div className="mt-10">
+            <PillButton variant="solid" href={`mailto:${profile.email}`}>
+              <Mail size={16} /> {profile.email}
+            </PillButton>
+          </div>
+        </motion.div>
+
+        {/* Details + form */}
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 lg:gap-16 pb-16 md:pb-20">
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, ease: ease.cinematic }}
-            className="text-center mb-16 md:mb-20"
+            transition={{ duration: 0.8, ease: revealEase }}
+            className="lg:col-span-2 flex flex-col gap-3"
           >
-            <motion.span
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="inline-block text-sm font-semibold tracking-[0.2em] uppercase mb-4"
-              style={{ color: 'var(--color-accent)' }}
-            >
-              Get In Touch
-            </motion.span>
-            <h2
-              className="text-4xl md:text-5xl lg:text-6xl font-bold mb-5"
-              style={{ color: 'var(--color-text)' }}
-            >
-              Let's Create Something <span className="text-gradient">Extraordinary</span>
-            </h2>
-            <p
-              className="max-w-xl mx-auto text-lg leading-relaxed"
-              style={{ color: 'var(--color-text-secondary)' }}
-            >
-              Have a project in mind or want to discuss the latest tech? I'm always open to new
-              opportunities.
-            </p>
+            {contactMethods.map(({ icon: Icon, label, value, href }) => {
+              const Wrapper = href ? 'a' : 'div';
+              return (
+                <Wrapper
+                  key={label}
+                  {...(href ? { href } : {})}
+                  className="group flex items-center gap-4 p-4 rounded-full bg-surface/40 hover:bg-surface border border-stroke backdrop-blur-md transition-colors"
+                >
+                  <span className="w-11 h-11 shrink-0 rounded-full border border-stroke flex items-center justify-center text-text-primary">
+                    <Icon size={17} strokeWidth={1.5} />
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block text-[10px] uppercase tracking-[0.25em] text-muted">{label}</span>
+                    <span className="block text-sm text-text-primary truncate">{value}</span>
+                  </span>
+                  {href && (
+                    <ArrowUpRight
+                      size={16}
+                      className="ml-auto mr-2 text-muted opacity-0 group-hover:opacity-100 group-hover:text-text-primary transition-opacity"
+                    />
+                  )}
+                </Wrapper>
+              );
+            })}
+
+            <blockquote className="mt-5 pl-5 border-l border-stroke">
+              <p className="font-display italic text-xl md:text-2xl text-text-primary/90 leading-snug">
+                &ldquo;{profile.quote}&rdquo;
+              </p>
+            </blockquote>
           </motion.div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-16 max-w-6xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, x: -40 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, ease: ease.cinematic }}
-              className="lg:col-span-2 space-y-8"
+          <motion.form
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.1, ease: revealEase }}
+            onSubmit={handleSubmit}
+            className="lg:col-span-3 rounded-3xl bg-surface/60 backdrop-blur-md border border-stroke p-6 md:p-10 flex flex-col gap-6"
+          >
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <Field label="Name" id="name" type="text" placeholder="Your Name" value={formData.name} onChange={handleInputChange} />
+              <Field label="Email" id="email" type="email" placeholder="your@email.com" value={formData.email} onChange={handleInputChange} />
+            </div>
+            <Field label="Subject" id="subject" type="text" placeholder="Project Inquiry" value={formData.subject} onChange={handleInputChange} />
+            <Field label="Message" id="message" as="textarea" rows={4} placeholder="Tell me about your project..." value={formData.message} onChange={handleInputChange} />
+
+            <MagneticButton
+              as="button"
+              type="submit"
+              strength={0.4}
+              className="group relative self-start mt-2 rounded-full"
             >
-              <div className="space-y-4">
-                {contactMethods.map(({ icon: Icon, label, value, href }, i) => {
-                  const Wrapper = href ? 'a' : 'div';
-                  const wrapperProps = href
-                    ? {
-                        href,
-                        target: href.startsWith('http') ? '_blank' : undefined,
-                        rel: 'noreferrer',
-                      }
-                    : {};
-                  return (
-                    <motion.div
-                      key={label}
-                      initial={{ opacity: 0, x: -20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: i * 0.1, duration: 0.5 }}
-                    >
-                      <Wrapper
-                        {...wrapperProps}
-                        className="flex items-center gap-4 p-4 rounded-xl transition-all duration-300 group cursor-pointer gradient-border"
-                        style={{
-                          background: 'var(--color-card)',
-                          border: '1px solid var(--color-border)',
-                        }}
-                      >
-                        <div
-                          className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
-                          style={{ background: 'var(--color-accent-glow)' }}
-                        >
-                          <Icon size={20} style={{ color: 'var(--color-accent)' }} />
-                        </div>
-                        <div>
-                          <p
-                            className="text-sm font-medium"
-                            style={{ color: 'var(--color-text-secondary)' }}
-                          >
-                            {label}
-                          </p>
-                          <p
-                            className="font-semibold text-sm"
-                            style={{ color: 'var(--color-text)' }}
-                          >
-                            {value}
-                          </p>
-                        </div>
-                        {href && (
-                          <ArrowUpRight
-                            size={16}
-                            className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity"
-                            style={{ color: 'var(--color-accent)' }}
-                          />
-                        )}
-                      </Wrapper>
-                    </motion.div>
-                  );
-                })}
-              </div>
-
-              <div>
-                <h4
-                  className="text-sm font-semibold tracking-[0.15em] uppercase mb-4"
-                  style={{ color: 'var(--color-text-secondary)' }}
-                >
-                  Follow Me
-                </h4>
-                <div className="flex gap-3">
-                  {socialLinks.map(({ icon: Icon, label, href, color }) => (
-                    <motion.a
-                      key={label}
-                      href={href}
-                      target="_blank"
-                      rel="noreferrer"
-                      whileHover={{ y: -5, scale: 1.08, rotate: 5 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 gradient-border"
-                      style={{
-                        background: 'var(--color-card)',
-                        border: '1px solid var(--color-border)',
-                        color: 'var(--color-text)',
-                      }}
-                    >
-                      <Icon size={20} />
-                    </motion.a>
-                  ))}
-                </div>
-              </div>
-
-              <motion.div
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.5 }}
-                className="p-4 rounded-xl"
-                style={{
-                  background: 'var(--color-card)',
-                  border: '1px solid var(--color-border)',
-                }}
-              >
-                <p
-                  className="text-sm italic leading-relaxed"
-                  style={{ color: 'var(--color-text-secondary)' }}
-                >
-                  "Great things are built by those who dare to imagine and execute. Let's build
-                  something the world remembers."
-                </p>
-              </motion.div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 40 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: 0.15, ease: ease.cinematic }}
-              className="lg:col-span-3"
-            >
-              <form
-                onSubmit={handleSubmit}
-                className="p-6 md:p-8 rounded-2xl space-y-5 gradient-border"
-                style={{
-                  background: 'var(--color-card)',
-                  border: '1px solid var(--color-border)',
-                }}
-              >
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <div>
-                    <label
-                      htmlFor="name"
-                      className="block text-sm font-medium mb-2"
-                      style={{ color: 'var(--color-text-secondary)' }}
-                    >
-                      Name
-                    </label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      required
-                      placeholder="Your Name"
-                      onFocus={() => setFocusedField('name')}
-                      onBlur={() => setFocusedField(null)}
-                      className="w-full px-4 py-3 rounded-xl text-sm outline-none"
-                      style={inputStyle('name')}
-                    />
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="email"
-                      className="block text-sm font-medium mb-2"
-                      style={{ color: 'var(--color-text-secondary)' }}
-                    >
-                      Email
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      required
-                      placeholder="your@email.com"
-                      onFocus={() => setFocusedField('email')}
-                      onBlur={() => setFocusedField(null)}
-                      className="w-full px-4 py-3 rounded-xl text-sm outline-none"
-                      style={inputStyle('email')}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label
-                    htmlFor="subject"
-                    className="block text-sm font-medium mb-2"
-                    style={{ color: 'var(--color-text-secondary)' }}
-                  >
-                    Subject
-                  </label>
-                  <input
-                    type="text"
-                    id="subject"
-                    name="subject"
-                    value={formData.subject}
-                    onChange={handleInputChange}
-                    required
-                    placeholder="Project Inquiry"
-                    onFocus={() => setFocusedField('subject')}
-                    onBlur={() => setFocusedField(null)}
-                    className="w-full px-4 py-3 rounded-xl text-sm outline-none"
-                    style={inputStyle('subject')}
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="message"
-                    className="block text-sm font-medium mb-2"
-                    style={{ color: 'var(--color-text-secondary)' }}
-                  >
-                    Message
-                  </label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    value={formData.message}
-                    onChange={handleInputChange}
-                    required
-                    rows={5}
-                    placeholder="Tell me about your project..."
-                    onFocus={() => setFocusedField('message')}
-                    onBlur={() => setFocusedField(null)}
-                    className="w-full px-4 py-3 rounded-xl text-sm outline-none resize-none"
-                    style={inputStyle('message')}
-                  />
-                </div>
-
-                <MagneticButton
-                  as="button"
-                  type="submit"
-                  strength={0.6}
-                  className="w-full flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-bold text-white transition-colors duration-300 btn-magnetic"
-                  style={{
-                    background:
-                      'linear-gradient(135deg, var(--color-gradient-start), var(--color-gradient-end))',
-                    boxShadow: '0 4px 25px var(--color-accent-glow)',
-                  }}
-                >
-                  <Send size={18} />
-                  Send Message
-                </MagneticButton>
-              </form>
-            </motion.div>
-          </div>
+              <span
+                aria-hidden="true"
+                className="absolute -inset-[2px] rounded-full accent-gradient-animated opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              />
+              <span className="relative inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-sm bg-text-primary text-bg group-hover:bg-bg group-hover:text-text-primary transition-colors">
+                <Send size={15} /> Send Message
+              </span>
+            </MagneticButton>
+          </motion.form>
         </div>
-      </ParallaxScene>
-    </SceneWrapper>
+
+        <FooterBar />
+      </div>
+    </section>
   );
 };
 

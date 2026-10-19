@@ -1,103 +1,114 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
-import { Sparkles } from 'lucide-react';
-import { RevealChars } from '../Motion/RevealText';
+import gsap from 'gsap';
 import ParticleField from '../Motion/ParticleField';
-import SceneWrapper from '../Motion/SceneWrapper';
 import ParallaxScene from '../Motion/ParallaxScene';
 import ParallaxLayer from '../Motion/ParallaxLayer';
-import MagneticButton from '../Motion/MagneticButton';
-import { ease } from '../../hooks/useMotionConfig';
+import HlsVideo from '../UI/HlsVideo';
+import PillButton from '../UI/PillButton';
+import useSectionNav from '../../hooks/useSectionNav';
+import { profile } from '../../data/portfolio';
 
-const HeroStory = () => {
+const useKathmanduTime = () => {
+  const format = () =>
+    new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Asia/Kathmandu',
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(new Date());
+  const [time, setTime] = useState(format);
+  useEffect(() => {
+    const id = setInterval(() => setTime(format()), 30_000);
+    return () => clearInterval(id);
+  }, []);
+  return time;
+};
+
+const HeroStory = ({ ready = true }) => {
   const containerRef = useRef(null);
+  const contentRef = useRef(null);
+  const [roleIndex, setRoleIndex] = useState(0);
+  const time = useKathmanduTime();
+  const goTo = useSectionNav();
+
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ['start start', 'end start'],
   });
-
-  const bgY = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
-  const midY = useTransform(scrollYProgress, [0, 1], ['0%', '30%']);
-  const textY = useTransform(scrollYProgress, [0, 1], ['0%', '60%']);
-  const opacity = useTransform(scrollYProgress, [0, 0.35], [1, 0]);
-  const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.88]);
+  const videoY = useTransform(scrollYProgress, [0, 1], ['0%', '30%']);
+  const midY = useTransform(scrollYProgress, [0, 1], ['0%', '40%']);
+  const textY = useTransform(scrollYProgress, [0, 1], ['0%', '55%']);
+  const opacity = useTransform(scrollYProgress, [0, 0.45], [1, 0]);
+  const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.92]);
   const rotateX = useTransform(scrollYProgress, [0, 0.4], [0, 8]);
   const sRotateX = useSpring(rotateX, { stiffness: 80, damping: 25 });
 
+  useEffect(() => {
+    const id = setInterval(() => setRoleIndex((i) => (i + 1) % profile.roles.length), 2000);
+    return () => clearInterval(id);
+  }, []);
+
+  useLayoutEffect(() => {
+    if (!ready) return;
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+      tl.fromTo('.name-reveal', { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 1.2, delay: 0.1 }).fromTo(
+        '.blur-in',
+        { opacity: 0, filter: 'blur(10px)', y: 20 },
+        { opacity: 1, filter: 'blur(0px)', y: 0, duration: 1, stagger: 0.1, clearProps: 'filter' },
+        0.3
+      );
+    }, contentRef);
+    return () => ctx.revert();
+  }, [ready]);
+
   return (
-    <SceneWrapper id="home" isFirst glowColor="var(--color-accent-glow)" glowPosition="50% 30%">
+    <section id="home" className="relative">
       <ParallaxScene
         ref={containerRef}
         perspective={1200}
         intensity={1}
-        className="relative h-[110vh] w-full flex items-center justify-center overflow-hidden"
-        style={{ background: 'var(--color-bg)' }}
+        className="relative h-screen min-h-[640px] w-full flex items-center justify-center overflow-hidden bg-bg"
       >
-        {/* DEEP BACKGROUND — gradient orbs */}
-        <ParallaxLayer depth={0.08} blur="far">
-          <motion.div style={{ y: bgY }} className="absolute inset-0">
-            <div
-              className="absolute top-[5%] right-[5%] w-[35vw] h-[35vw] rounded-full"
-              style={{
-                background: 'radial-gradient(circle, var(--color-gradient-start), transparent 70%)',
-                opacity: 0.25,
-              }}
-            />
-            <div
-              className="absolute bottom-[10%] left-[0%] w-[45vw] h-[45vw] rounded-full"
-              style={{
-                background: 'radial-gradient(circle, var(--color-gradient-end), transparent 70%)',
-                opacity: 0.18,
-              }}
-            />
-            <div
-              className="absolute top-[35%] left-[45%] w-[30vw] h-[30vw] rounded-full -translate-x-1/2"
-              style={{
-                background: 'radial-gradient(circle, var(--color-gradient-mid), transparent 70%)',
-                opacity: 0.12,
-              }}
-            />
+        {/* DEEP BACKGROUND — streaming video, drifts with scroll + cursor */}
+        <ParallaxLayer depth={0.06} tilt={false} blur="sharp">
+          <motion.div style={{ y: videoY, scale: 1.08 }} className="absolute inset-0 overflow-hidden">
+            <HlsVideo />
           </motion.div>
         </ParallaxLayer>
+        <div className="absolute inset-0 bg-black/20 pointer-events-none" />
 
-        {/* PARTICLES — own animation, no parallax */}
-        <ParticleField count={30} />
+        <ParticleField count={24} />
 
-        {/* MIDGROUND — geometric shapes */}
+        {/* MIDGROUND — thin geometric outlines */}
         <ParallaxLayer depth={0.3} blur="mid">
           <motion.div style={{ y: midY }} className="absolute inset-0">
             <motion.div
               animate={{ rotate: 360 }}
-              transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
-              className="absolute top-[18%] right-[18%] w-20 h-20 rounded-lg"
-              style={{ border: '1px solid rgba(var(--color-accent-rgb), 0.1)' }}
-            />
+              transition={{ duration: 40, repeat: Infinity, ease: 'linear' }}
+              className="absolute top-[18%] right-[14%] w-24 h-24 rounded-full border border-white/10"
+            >
+              <span className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full accent-gradient" />
+            </motion.div>
             <motion.div
               animate={{ rotate: -360 }}
-              transition={{ duration: 40, repeat: Infinity, ease: 'linear' }}
-              className="absolute bottom-[25%] left-[12%] w-28 h-28 rounded-full"
-              style={{ border: '1px solid rgba(var(--color-accent-rgb), 0.08)' }}
+              transition={{ duration: 50, repeat: Infinity, ease: 'linear' }}
+              className="absolute bottom-[24%] left-[10%] w-32 h-32 rounded-full border border-dashed border-white/10"
             />
             <motion.div
               animate={{ y: [0, -25, 0] }}
               transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
-              className="absolute top-[55%] right-[28%] w-2 h-2 rounded-full"
-              style={{ background: 'var(--color-accent)', opacity: 0.25 }}
+              className="absolute top-[58%] right-[26%] w-1.5 h-1.5 rounded-full bg-white/30"
             />
             <motion.div
               animate={{ y: [0, 18, 0] }}
               transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
-              className="absolute top-[28%] left-[22%] w-1.5 h-1.5 rounded-full"
-              style={{ background: 'var(--color-gradient-end)', opacity: 0.35 }}
-            />
-            <motion.div
-              animate={{ y: [0, -12, 0], x: [0, 8, 0] }}
-              transition={{ duration: 11, repeat: Infinity, ease: 'easeInOut' }}
-              className="absolute bottom-[40%] right-[12%] w-1 h-1 rounded-full"
-              style={{ background: 'var(--color-gradient-mid)', opacity: 0.3 }}
+              className="absolute top-[30%] left-[22%] w-1 h-1 rounded-full bg-white/40"
             />
           </motion.div>
         </ParallaxLayer>
+
+        <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-bg to-transparent pointer-events-none" />
 
         {/* CONTENT — minimal drift, no tilt for readability */}
         <ParallaxLayer
@@ -108,171 +119,97 @@ const HeroStory = () => {
           className="z-10"
         >
           <motion.div
-            style={{
-              y: textY,
-              opacity,
-              scale,
-              rotateX: sRotateX,
-              transformPerspective: 1200,
-            }}
-            className="relative text-center px-4 max-w-5xl mx-auto"
+            ref={contentRef}
+            style={{ y: textY, opacity, scale, rotateX: sRotateX, transformPerspective: 1200 }}
+            className="relative flex flex-col items-center text-center px-6"
           >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.5, y: 30 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              transition={{ duration: 1.2, ease: ease.smoothOut }}
-              className="relative inline-block mb-10"
-            >
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
-                className="absolute -inset-5 rounded-full"
-              >
-                <div
-                  className="absolute inset-0 rounded-full"
-                  style={{ border: '1px dashed rgba(var(--color-accent-rgb), 0.2)' }}
-                />
-                <div
-                  className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full glow-accent"
-                  style={{ background: 'var(--color-accent)' }}
-                />
-              </motion.div>
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 25, repeat: Infinity, ease: 'linear' }}
-                className="absolute -inset-3 rounded-full"
-                style={{ border: '1px solid rgba(var(--color-accent-rgb), 0.08)' }}
-              />
-              <div
-                className="w-28 h-28 md:w-36 md:h-36 rounded-full overflow-hidden shadow-2xl"
-                style={{
-                  boxShadow: '0 0 50px var(--color-accent-glow), 0 25px 50px rgba(0,0,0,0.3)',
-                  border: '2px solid rgba(var(--color-accent-rgb), 0.15)',
-                }}
-              >
-                <img
-                  src="/profile_picture.png"
-                  alt="Bhuwan Joshi"
-                  className="w-full h-full object-cover"
-                  loading="eager"
-                />
-              </div>
-              <motion.div
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 1.5, type: 'spring', stiffness: 300 }}
-                className="absolute -bottom-1 -right-1 flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold text-white tracking-wide"
-                style={{
-                  background: '#22c55e',
-                  boxShadow: '0 0 16px rgba(34, 197, 94, 0.5)',
-                }}
-              >
-                <Sparkles size={10} /> OPEN
-              </motion.div>
-            </motion.div>
+            <span className="blur-in opacity-0 text-xs text-muted uppercase tracking-[0.3em] mb-8">
+              Portfolio &rsquo;26
+            </span>
 
-            <div className="mb-5">
-              <RevealChars
-                text="Bhuwan Joshi"
-                className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight"
-                delay={0.4}
-              />
-            </div>
+            <h1 className="name-reveal opacity-0 text-6xl md:text-8xl lg:text-9xl font-display italic leading-[0.9] tracking-tight text-text-primary mb-6">
+              {profile.name}
+            </h1>
 
-            <motion.div
-              initial={{ opacity: 0, y: 25 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.9, duration: 1, ease: ease.cinematic }}
-              className="mb-6"
-            >
+            <p className="blur-in opacity-0 text-base md:text-xl text-text-primary/80 mb-4">
               <span
-                className="text-xl md:text-2xl lg:text-3xl font-semibold text-gradient"
-                style={{ textShadow: '0 0 40px var(--color-accent-glow)' }}
+                key={roleIndex}
+                className="font-display italic text-text-primary animate-role-fade-in inline-block text-xl md:text-2xl"
               >
-                Full Stack Developer · React Native + Web
-              </span>
-            </motion.div>
+                {profile.roles[roleIndex]}
+              </span>{' '}
+              developer, building from {profile.location}.
+            </p>
 
-            <motion.p
-              initial={{ opacity: 0, y: 25 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.1, duration: 0.9, ease: ease.cinematic }}
-              className="max-w-2xl mx-auto text-base md:text-lg leading-relaxed mb-12"
-              style={{ color: 'var(--color-text-secondary)' }}
-            >
-              Crafting scalable web applications and cross-platform mobile experiences with
-              React, TypeScript, and modern full-stack architectures.
-            </motion.p>
+            <p className="blur-in opacity-0 text-sm md:text-base text-muted max-w-md mb-12 leading-relaxed">
+              {profile.intro}
+            </p>
 
-            <motion.div
-              initial={{ opacity: 0, y: 25 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.3, duration: 0.8, ease: ease.cinematic }}
-              className="flex flex-col sm:flex-row items-center justify-center gap-4"
-            >
-              <MagneticButton
-                as="a"
-                href="#projects"
-                className="group relative px-8 py-4 rounded-full font-semibold text-white overflow-hidden btn-magnetic"
-                style={{
-                  background:
-                    'linear-gradient(135deg, var(--color-gradient-start), var(--color-gradient-end))',
-                }}
+            <div className="blur-in opacity-0 inline-flex flex-wrap justify-center gap-4">
+              <PillButton
+                as="button"
+                variant="solid"
+                onClick={() => goTo('work')}
               >
-                <span className="relative z-10 flex items-center gap-2">
-                  View My Work
-                  <motion.span
-                    animate={{ x: [0, 4, 0] }}
-                    transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-                  >
-                    →
-                  </motion.span>
-                </span>
-                <div
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                  style={{
-                    background:
-                      'linear-gradient(135deg, var(--color-gradient-end), var(--color-gradient-start))',
-                  }}
-                />
-              </MagneticButton>
-              <MagneticButton
-                as="a"
-                href="#contact"
-                strength={0.4}
-                className="px-8 py-4 rounded-full font-semibold transition-colors duration-300 glass gradient-border btn-magnetic"
-                style={{ color: 'var(--color-text)' }}
+                See Works
+              </PillButton>
+              <PillButton
+                as="button"
+                variant="outline"
+                onClick={() => goTo('contact')}
               >
-                Get In Touch
-              </MagneticButton>
-            </motion.div>
+                Reach out...
+              </PillButton>
+            </div>
           </motion.div>
         </ParallaxLayer>
 
+        {/* Editorial corners */}
         <motion.div
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-10"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 2.5, duration: 1 }}
+          initial={{ opacity: 0, y: 16 }}
+          animate={ready ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 1.2, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+          className="hidden md:flex absolute bottom-10 left-10 z-10 items-center gap-3"
         >
-          <span
-            className="text-[10px] font-semibold tracking-[0.3em] uppercase"
-            style={{ color: 'var(--color-text-secondary)' }}
-          >
-            Scroll to explore
-          </span>
-          <div
-            className="w-6 h-10 rounded-full flex justify-center pt-2"
-            style={{ border: '2px solid var(--color-border)' }}
-          >
-            <div
-              className="w-1 h-2.5 rounded-full scroll-indicator-dot"
-              style={{ background: 'var(--color-accent)' }}
+          <span className="relative">
+            <img
+              src={profile.photo}
+              alt={profile.name}
+              loading="eager"
+              className="w-10 h-10 rounded-full object-cover border border-white/15"
             />
-          </div>
+            <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-green-500 border-2 border-bg" />
+          </span>
+          <span className="flex flex-col text-left">
+            <span className="text-xs text-text-primary">{profile.headline}</span>
+            <span className="text-[11px] text-muted">Open to internships & freelance</span>
+          </span>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={ready ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 1.3, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+          className="hidden md:flex absolute bottom-10 right-10 z-10 flex-col items-end text-right"
+        >
+          <span className="text-[11px] text-muted uppercase tracking-[0.2em]">Kathmandu, NP</span>
+          <span className="font-display italic text-2xl text-text-primary tabular-nums">{time}</span>
+        </motion.div>
+
+        {/* Scroll indicator */}
+        <motion.div
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-3"
+          initial={{ opacity: 0 }}
+          animate={ready ? { opacity: 1 } : {}}
+          transition={{ delay: 1.6, duration: 1 }}
+        >
+          <span className="text-xs text-muted uppercase tracking-[0.2em]">Scroll</span>
+          <span className="relative w-px h-10 bg-stroke overflow-hidden">
+            <span className="absolute inset-x-0 top-0 h-1/2 bg-text-primary/80 animate-scroll-down" />
+          </span>
         </motion.div>
       </ParallaxScene>
-    </SceneWrapper>
+    </section>
   );
 };
 
